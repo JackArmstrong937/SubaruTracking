@@ -19,13 +19,17 @@ namespace SubaruEfficiencyTracking.Controllers
         }
 
         [Route("InitialSetup")]
-        public IActionResult InitialSetup()
+        public IActionResult InitialSetup(string dt )
         {
-            //StoreLocationModel newStore = new StoreLocationModel();
-            //newStore.StoreGuid = Guid.NewGuid();
-            //newStore.StoreName = "Beechmont Subaru";
-            //newStore.StoreActive = true;
-            //_DB.CreateRow<StoreLocationModel>(newStore);
+            if (dt == "Stores")
+            {
+                StoreLocationModel newStore = new StoreLocationModel();
+                newStore.StoreGuid = Guid.NewGuid();
+                newStore.StoreName = "Beechmont Subaru";
+                newStore.StoreActive = true;
+                _DB.CreateRow<StoreLocationModel>(newStore);
+            }
+            
 
             //TechModel newTech = new TechModel()
             //{
