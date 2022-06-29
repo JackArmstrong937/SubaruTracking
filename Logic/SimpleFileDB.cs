@@ -24,6 +24,11 @@ namespace SubaruEfficiencyTracking.Logic
             _Tables = new Dictionary<string, DataTable>();
         }
 
+        public void ClearCache()
+        {
+            _Tables = new Dictionary<string, DataTable>();
+        }
+
         public string GetTableName<T>()
         {
             string TableName = typeof(T).GetCustomAttribute<DataContractAttribute>()?.Name;

@@ -12,6 +12,7 @@ namespace SubaruEfficiencyTracking.Logic
         public void CreateRow<T>(T RowData);
         public void UpdateRow<T>(T RowData);
         public void DeleteRow<T>(T RowData);
+        public void ClearCache();
 
     }
 }

@@ -18,6 +18,13 @@ namespace SubaruEfficiencyTracking.Controllers
             _DB = db;
         }
 
+        [Route("ClearCache")]
+        public IActionResult ClearCache()
+        {
+            _DB.ClearCache();
+            return null;
+        }
+
         [Route("InitialSetup")]
         public IActionResult InitialSetup(string dt )
         {
