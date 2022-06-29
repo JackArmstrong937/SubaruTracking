@@ -22,7 +22,7 @@ namespace SubaruEfficiencyTracking.Controllers
         public IActionResult ClearCache()
         {
             _DB.ClearCache();
-            return null;
+            return Ok();
         }
 
         [Route("InitialSetup")]
