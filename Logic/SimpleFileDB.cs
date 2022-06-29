@@ -155,6 +155,7 @@ namespace SubaruEfficiencyTracking.Logic
             string RealTablePath = _FileStoreLocation + TableName + ".csv";
 
             if (File.Exists(TempTablePath)) { File.Delete(TempTablePath); }
+            if (!Directory.Exists(_FileStoreLocation)) { Directory.CreateDirectory(_FileStoreLocation); }
 
             //Create the file contents
             StringBuilder sbOut = new StringBuilder();

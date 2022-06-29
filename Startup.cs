@@ -29,7 +29,10 @@ namespace SubaruEfficiencyTracking
             services.AddControllers();
             services.AddControllersWithViews();
 
-            services.AddSingleton<IDBConnector>(new SimpleFileDB("D:\\Coding\\SubaruEfficiencyTracking\\bin\\DataBase"));
+            string RootPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            RootPath = System.IO.Path.GetDirectoryName(RootPath);
+            //services.AddSingleton<IDBConnector>(new SimpleFileDB("D:\\Coding\\SubaruEfficiencyTracking\\bin\\DataBase"));
+            services.AddSingleton<IDBConnector>(new SimpleFileDB(RootPath+"\\WWWRoot\\Database"));
             services.AddSingleton<ITechStatService, TechStatService>();
         }
 
