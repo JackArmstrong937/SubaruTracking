@@ -19,7 +19,6 @@ namespace SubaruEfficiencyTracking.Controllers
         }
 
         [Route("ClearCache")]
-        [HttpPost]
         public IActionResult ClearCache()
         {
             _DB.ClearCache();
