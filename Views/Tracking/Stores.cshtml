@@ -1,0 +1,52 @@
+﻿@using SubaruEfficiencyTracking.Models
+@model List<StoreLocationModel>;
+@{
+    Layout = "~/Views/Shared/Layout.cshtml";
+}
+
+<div id="mainSection" style="margin-right: 10px;">
+    <div class="row">
+        <div class="col-8"></div>
+        <div class="col-4">
+            <div class="col-12" id="entrySection">
+                <div id="entryHeader" class="col-12">Add New Dealership</div>
+                <div id="ro-entry">
+                    <form action="/Tracking/newEntry" method="post">
+                        <div class="col-12">
+                            <label for="carCompany">Car Company: </label>
+                            <input type="text" id="carCompany" name="carCompany"><br><br>
+                        </div>
+                        <div class="col-12">
+                            <label for="State">State: </label>
+                            <input type="text" id="State" name="State"><br><br>
+                        </div>
+                        <div class="col-12">
+                            <label for="zipCode">Zipcode: </label>
+                            <input type="text" id="zipCode" name="zipCode"><br><br>
+                        </div>
+                        <div class="col-12">
+                            <label for="town">Town or City: </label>
+                            <input type="text" id="town" name="town"><br><br>
+                        </div>
+                        <div class="row">
+                            <div class="col-3" id="submitButton">
+                                <input type="submit" value="Submit" onclick="SubmitCheck();" style="margin-right: 20px; border-radius: 25px;">
+                            </div>
+                            <div class="col-5" id="submitMessage">
+                                Dealership Added!
+                            </div>
+                            <div class="col-3"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-12">
+                    <div class="row" id="entryResults">
+                        <div id="ErrorMessage" class="col-12">
+                            error message here
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

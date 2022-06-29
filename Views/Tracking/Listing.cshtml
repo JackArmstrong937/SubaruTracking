@@ -1,0 +1,164 @@
+﻿@using SubaruEfficiencyTracking.Models
+@model RoEntryViewModel;
+@{
+    ViewBag.HeaderTitle = "Efficiency Statistics";
+
+    Layout = "~/Views/Shared/Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-8">
+        <div class="row">
+            <div class="col-4 dropDownOption">
+                <label for="timePeriod">Time Period: </label>
+                <select id="timePeriod" onchange="LoadListFromFilters();">
+                    @foreach (PayPeriodModel Period in Model.PayPeriods)
+                    {
+                        <option value="@Period.PayPeriodGuid" @(Period.PayPeriodGuid == Model.SelectedPayPeriodGuid ? "selected" : "")>@Period.StartDate.ToShortDateString() - @Period.EndDate.ToShortDateString()</option>
+                    }
+                </select><br><br>
+            </div>
+            <div class="col-4 dropDownOption">
+                <label for="StoreLocation">Store: </label>
+                <select id="StoreLocation" onchange="LoadListFromFilters();">
+                    @foreach (StoreLocationModel store in Model.Stores)
+                    {
+                        <option value="@store.StoreGuid" @(store.StoreGuid == Model.SelectedStoreGuid ? "selected" : "")>@store.StoreName</option>
+                    }
+                </select><br><br>
+            </div>
+        </div>
+        <div class="row" id="infoHeader">
+            <div class="col-2 infoDiv">Tech Name</div>
+            <div class="col-2 infoDiv">Tech Number</div>
+            <div class="col-2 infoDiv">Cars Completed</div>
+            <div class="col-2 infoDiv">Hours Turned</div>
+            <div class="col-2 infoDiv">Expected Hours</div>
+            <div class="col-2">Overall Efficiency</div>
+        </div>
+        <div id="TechStats">
+            @if (Model.TechStats != null)
+            {
+                foreach (TechPeriodStatModel t in Model.TechStats)
+                {
+                    <div class="row altRowColors">
+                        <div class="col-2"><a href="/Tracking/TechTimes/?t=@t.TechGuid&p=@Model.SelectedPayPeriodGuid&s=@Model.SelectedStoreGuid">@t.TechFirstName @t.TechLastName</a></div>
+                        <div class="col-2 ">@Model.Techs.Find(m => m.TechGuid == t.TechGuid).TechNumber</div>
+                        <div class="col-2 ">@t.CarsCompleted</div>
+                        <div class="col-2 ">@t.HoursTurned</div>
+                        <div class="col-2 ">@t.ExpectedHours</div>
+                        <div class="col-2 ">@((t.OverallEfficiency * 100).ToString("f2"))%</div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="col-12" id="entrySection">
+            <div id="entryHeader" class="col-12">RO Entries</div>
+            <div id="ro-entry">
+                <form action="/Tracking/newEntry" method="post">
+                    <div class="col-12">
+                        <div class="col-12">
+                            <input type="hidden" id="StoreGuid" name="StoreGuid" value="@Model.SelectedStoreGuid" />
+                            <label for="PayPeriodGuid">Pay Period: </label>
+                            <select id="PayPeriodGuid" name="PayPeriodGuid">
+                                @foreach (PayPeriodModel p in Model.PayPeriods)
+                                {
+                                    <option value="@p.PayPeriodGuid" @(p.PayPeriodGuid == Model.SelectedPayPeriodGuid ? "selected" : "")>@p.StartDate.ToShortDateString() - @p.EndDate.ToShortDateString()</option>
+                                }
+                            </select><br /><br />
+                            <label for="TechGuid">Technician: </label>
+                            <select id="TechGuid" name="TechGuid">
+                                <option value=""></option>
+                                @foreach (TechModel t in Model.Techs)
+                                {
+                                    <option value="@t.TechGuid">@t.TechFirstName @t.TechLastName - @t.TechNumber</option>
+                                }
+                            </select><br /><br />
+                        </div>
+                        <div class="col-12">
+                            <label for="openTime">Time Opened:</label>
+                            <input type="text" id="OpenTime" name="OpenTime"><br><br>
+                        </div>
+                        <div class="col-12">
+                            <label for="closeTime">Time Closed:</label>
+                            <input type="text" id="CloseTime" name="CloseTime"><br><br>
+                        </div>
+                        <div class="col-12">
+                            <label for="exptHours">Expected Hours: </label>
+                            <input type="text" id="ExptHours" name="ExptHours"><br><br>
+                        </div>
+                        <div class="row">
+                            <div class="col-3" id="submitButton">
+                                <input type="submit" value="Submit" onclick="return SubmitCheck();" style="margin-right: 20px; margin-bottom: 20px; border-radius: 25px; ">
+                            </div><br />
+                            <div class="col-5" id="submitMessage" style="@(Model.RoEntry ? "" : "display: none;")">Entry Submitted!</div>
+                            <div id="ErrorMessage" style="display: none;">
+                                One or more entry field is not filled out, try again!
+                            </div>
+                            <div class="col-3"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            @*<div class="col-12">
+                    <div class="row" id="entryResults">
+                        <div class="col-6" id="resultHeader">
+                            <label for="expEffic">Expected Efficiency</label><br>
+                            <div class="entryResultOutput"></div>
+                        </div>
+                        <div class="col-6" id="resultOutput">
+                            <label for="actlEffic">Actual Efficiency</label><br>
+                            <div class="entryResultOutput"></div>
+                        </div>
+
+                    </div>
+                </div>*@
+        </div>
+    </div>
+</div>
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#submitMessage").fadeOut(4000);
+        });
+        function SubmitCheck() {
+            if ($("#TechGuid").val() == "") {
+                $("#ErrorMessage").show().fadeOut(4000);
+                return false;
+            }
+            else if ($("#OpenTime").val() == "") {
+                $("#ErrorMessage").show().fadeOut(4000);
+
+                return false;
+            }
+            else if ($("#CloseTime").val() == "") {
+                $("#ErrorMessage").show().fadeOut(4000);
+
+                return false;
+            }
+            else if ($("#ExptHours").val() == "") {
+                $("#ErrorMessage").show().fadeOut(4000);
+
+                return false;
+            }
+        };
+
+        $.timeEntry.setDefaults({ show24Hours: true });
+        $('#OpenTime').timeEntry({ show24Hours: true, showSeconds: false })
+        $('#CloseTime').timeEntry({ show24Hours: true, showSeconds: false })
+
+        $(document).on("keydown", "form", function (event) {
+            return event.key != "Enter";
+        });
+
+        function LoadListFromFilters() {
+            var url = "/Tracking/Listing?";
+            url += "p=" + $("#timePeriod").val();
+            url += "&s=" + $("#StoreLocation").val();
+            window.location = url;
+        }
+    </script>
+}

@@ -1,0 +1,46 @@
+﻿@using SubaruEfficiencyTracking.Models
+@model RoEntryViewModel;
+@{
+    ViewBag.HeaderTitle = "RO-Clock";
+
+    Layout = "~/Views/Shared/Layout.cshtml";
+}
+<br /><br />
+<div class="col-12 d-flex justify-content-center">
+    <div class="col-6 ClockBox" id="entrySection" >
+        <div class="col-12">
+            <div id="entryHeader">RO-Clock</div>
+            <div class="col-6">
+
+            </div>
+            <div class="row ClockDiv" >
+                <div>
+                    <label for="TechGuid">Technician: </label>
+                    <select id="TechGuid" name="TechGuid">
+                        <option value=""></option>
+                        @foreach (TechModel t in Model.Techs)
+                         {
+                           <option value="@t.TechGuid">@t.TechFirstName @t.TechLastName - @t.TechNumber</option>
+                         }
+                    </select><br /><br />
+                </div>
+                <div>
+                    <label for="ROGuid">RO Number: </label>
+                    <select id="ROGuid" name="ROGuid">
+                        <option value=""></option>
+                    </select><br /><br />
+                </div>
+                <br /><br /><br /><br />
+                <div class="col-3 ClockButton">
+                    <input type="submit" id="StartClock" value="Start Working" onclick="" style="margin-right: 20px; margin-bottom: 20px; border-radius: 25px; ">
+                </div>
+                <div class="col-2 ClockButton">
+                    <input type="submit" id="PauseClock" value="Pause" onclick="" style="margin-right: 20px; margin-bottom: 20px; border-radius: 25px; ">
+                </div>
+                <div class="col-2 ClockButton">
+                    <input type="submit" id="FinishClock" value="Finish" onclick="" style="margin-right: 20px; margin-bottom: 20px; border-radius: 25px; ">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

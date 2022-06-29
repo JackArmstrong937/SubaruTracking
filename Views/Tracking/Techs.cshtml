@@ -1,0 +1,123 @@
+﻿@using SubaruEfficiencyTracking.Models
+@model TechAdminModel;
+@{
+    ViewBag.HeaderTitle = "List/Edit";
+
+    Layout = "~/Views/Shared/Layout.cshtml";
+}
+<div class="row">
+    <div class="col-8">
+        <div class="row" id="infoHeader">
+            <div class="col-1"></div>
+            <div class="col-2 infoDiv">First Name</div>
+            <div class="col-2 infoDiv">Last Name</div>
+            <div class="col-2 infoDiv">Tech Number</div>
+            <div class="col-3 infoDiv">Store</div>
+            <div class="col-2">Active</div>
+        </div>
+        <div id="TechStats">
+            @if (Model.Techs != null)
+            {
+                foreach (TechModel t in Model.Techs.FindAll(m => m.TechActive == true))
+                {
+                    <div class="row altRowColors">
+                        <div class="col-1"><a href="/Tracking/Techs?t=@t.TechGuid">Edit</a></div>
+                        <div class="col-2">@t.TechFirstName</div>
+                        <div class="col-2">@t.TechLastName</div>
+                        <div class="col-2 ">@t.TechNumber</div>
+                        <div class="col-3 ">@Model.Stores.Find(m => m.StoreGuid == t.StoreGuid).StoreName</div>
+                        <div class="col-2 ">@(t.TechActive ? "Yes":"No")</div>
+                    </div>
+                }
+                foreach (TechModel t in Model.Techs.FindAll(m => m.TechActive == false))
+                {
+                    <div class="row altRowColors">
+                        <div class="col-1"><a href="/Tracking/Techs?t=@t.TechGuid">Edit</a></div>
+                        <div class="col-2">@t.TechFirstName</div>
+                        <div class="col-2">@t.TechLastName</div>
+                        <div class="col-2 ">@t.TechNumber</div>
+                        <div class="col-3 ">@Model.Stores.Find(m => m.StoreGuid == t.StoreGuid).StoreName</div>
+                        <div class="col-2 ">@(t.TechActive ? "Yes":"No")</div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="col-12" id="entrySection">
+            <div id="entryHeader" class="col-12">@(Model.EditingTech.TechGuid == Guid.Empty ? "Add New Technician" : "Edit Technician")</div>
+            <div id="ro-entry">
+                <form action="/Tracking/newTech" method="post">
+                    <input type="hidden" id="TechGuid" name="TechGuid" value="@Model.EditingTech.TechGuid" />
+                    <div class="col-12">
+                        <label for="fName">First Name: </label>
+                        <input type="text" id="TechFirstName" name="TechFirstName" value="@Model.EditingTech.TechFirstName"><br><br>
+                    </div>
+                    <div class="col-12">
+                        <label for="Lname">Last Name: </label>
+                        <input type="text" id="TechLastName" name="TechLastName" value="@Model.EditingTech.TechLastName"><br><br>
+                    </div>
+                    <div class="col-12">
+                        <label for="techNum">Tech Number: </label>
+                        <input type="text" id="TechNumber" name="TechNumber" value="@Model.EditingTech.TechNumber"><br><br>
+                    </div>
+                    <div class="col-12">
+                        <label for="techStore">Tech Store: </label>
+                        <select id="StoreGuid" name="StoreGuid">
+                            @foreach (StoreLocationModel store in Model.Stores)
+                            {
+                                <option value="@store.StoreGuid" @(store.StoreGuid == Model.EditingTech.StoreGuid ? "selected" : "")>@store.StoreName</option>
+                            }
+                        </select><br><br>
+                    </div>
+                    <div class="col-12" style="@(Model.EditingTech.TechGuid == Guid.Empty ? "display:none;" : "")">
+                        <label for="Active">Active:</label>
+                        <input type="checkbox" @(Model.EditingTech.TechActive ? "checked" : "") onchange="$('#TechActive').val($(this).is(':checked'));"><br><br>
+                        <input type="hidden" id="TechActive" name="TechActive" value="@(Model.EditingTech.TechActive ? "true" : "false")"/>
+                    </div>
+                    <div class="row">
+                        <div class="col-3" id="submitButton">
+                            <input type="submit" value="Submit" onclick="return SubmitCheck();" style="margin-right: 20px; margin-bottom: 20px; border-radius: 25px;">
+                        </div>
+                        <div class="col-8">
+                            <div id="submitMessage" style="@(Model.AddedTech ? "" : "display: none;")">New Technician Added!</div>
+                            <div id="updateMessage" style="@(Model.UpdatedTech ? "" : "display: none;")">Technician Updated!</div>
+                            <div id="ErrorMessage" style="display: none;">
+                                One or more entry field is not filled out, try again!
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#submitMessage").fadeOut(4000);
+            $("#updateMessage").fadeOut(4000);
+        });
+        function SubmitCheck() {
+            if ($("#TechFirstName").val() == "") {
+                $("#ErrorMessage").show().fadeOut(4000);
+                return false;
+            }
+            else if ($("#TechLastName").val() == "") {
+                $("#ErrorMessage").show().fadeOut(4000);
+
+                return false;
+            }
+            else if ($("#TechNumber").val() == "") {
+                $("#ErrorMessage").show().fadeOut(4000);
+
+                return false;
+            }
+        };
+
+        $(document).on("keydown", "form", function (event) {
+            return event.key != "Enter";
+        });
+    </script>
+}

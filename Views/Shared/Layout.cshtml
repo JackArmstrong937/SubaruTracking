@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Subaru Technicians Efficiency Tracking</title>
+    <link href="/Includes/css/subaru_app.css" rel="stylesheet">
+    <link href="/Includes/css/bootstrap.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/Includes/css/js/jquery.timeentry.css">
+    <script type="text/javascript" src="~/Includes/js/jquery.plugin.js"></script>
+    <script type="text/javascript" src="~/Includes/js/jquery.timeentry.js"></script>
+
+</head>
+<body class="mainBody" style="background-color: rgb(60, 60, 60); overflow: hidden;">
+    <div class="row">
+        <div class="col-6" id="headerTitle" style="background-color: rgb(34, 34, 34); border-radius: 10px">
+            <image id="logo" src="/Includes/Images/SubaruLogo.jpg" style="box-shadow: -2px 2px 8px black"></image>
+            Subaru Lube Techs
+            @ViewBag.HeaderTitle
+        </div>
+        <div class="col-6" id="pageTabs">
+            <div class="linkDiv col-1">
+                <a href="/Tracking/Listing">Efficiencies</a>
+            </div>
+            <div class="linkDiv col-1">
+                <a href="/Tracking/TechTimes">Entry Details</a>
+            </div>
+            <div class="linkDiv col-1">
+                <a href="/Tracking/Techs">Technicians</a>
+            </div>
+            <div class="linkDiv col-1">
+                <a href="/Tracking/ROClock">RO-Clock</a>
+            </div>
+        </div>
+    </div>
+    <div id="mainSection" style="margin-right: 10px;">
+        @RenderBody()
+    </div>
+</body>
+    @RenderSection("Scripts", false)
+</html>
+
+<script type="text/javascript">
+    $(".ParentList").click(function () {
+        $(this).parent().find("ul").toggle();
+    });
+</script>
