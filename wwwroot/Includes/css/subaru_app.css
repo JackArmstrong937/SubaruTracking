@@ -25,9 +25,10 @@
         height: 30px;
     }
 
-#TechFilter{
+#TechFilter {
     width: 200px;
 }
+
 #infoHeader {
     background-color: rgb(211, 211, 53);
     padding: 5px;
@@ -82,7 +83,7 @@
     }
 
 #pageTabs {
-    text-align:right;
+    text-align: right;
     margin-top: 15px;
     padding-right: 10px;
 }
@@ -109,7 +110,7 @@
     }
 
 #ErrorMessage {
-  /*  color: white;
+    /*  color: white;
     font-size: 20px;
     background-color: rgb(255, 19, 19);
     border-radius: 25px;
@@ -117,9 +118,9 @@
     padding: 5px;
     margin-top: 7px;
     margin-bottom: 7px;*/
-  color:red;
-  font-weight:bold;
-  margin-right: 5px;
+    color: red;
+    font-weight: bold;
+    margin-right: 5px;
 }
 
 #submitMessage {
@@ -170,10 +171,52 @@ select:hover {
 .altRowColors:nth-child(odd) {
     background-color: lightgray;
 }
+
 .altRowColors:nth-child(even) {
     background-color: white;
 }
 
-.ClockDiv{
+.ClockDiv {
     padding-left: 15px;
 }
+
+.loginPage {
+    background-image: url("/Includes/Images/SubaruLoginBackground.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow-x: hidden;
+}
+
+.loginTitle {
+    background-color: rgb(34, 34, 34);
+    font-size: 35px;
+    color: white;
+    padding: 20px;
+    padding-left: 20px;
+    border-bottom: 4px solid blue;
+    text-shadow: 2px 2px 2px rgb(116, 116, 116);
+    text-align: center;
+}
+
+.loginBox {
+    background-color: rgb(233, 233, 233);
+    color: black;
+    text-align: center;
+    border: 2px solid black;
+    border-radius: 8px;
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+.loginButton {
+    margin-right: 20px;
+    border-radius: 25px;
+    background-color: rgb(35, 33, 113);
+    color: white;
+    width: 200px;
+    border-radius: 5px;
+}
+
+    .loginButton:hover {
+        background-color: rgb(39, 73, 199);
+    }

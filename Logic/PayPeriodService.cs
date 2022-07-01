@@ -35,10 +35,10 @@ namespace SubaruEfficiencyTracking.Logic
 
         private void FindPeriodStartEnd(DateTime TargetDate, ref DateTime StartDate, ref DateTime EndDate)
         {
-            DateTime FirstGoodPeriodStart = DateTime.Parse("6/30/2022");
-
+            DateTime FirstGoodPeriodStart = DateTime.Parse("6/16/2022");
+            
             DateTime TestStart = FirstGoodPeriodStart;
-            DateTime TestEnd = FirstGoodPeriodStart.AddDays(13);
+            DateTime TestEnd = FirstGoodPeriodStart.AddDays(14).AddSeconds(-1);
 
             while (TestStart > TargetDate || TestEnd < TargetDate)
             {

@@ -79,15 +79,15 @@
                         </div>
                         <div class="col-12">
                             <label for="openTime">Time Opened:</label>
-                            <input type="text" id="OpenTime" name="OpenTime"><br><br>
+                            <input type="text" id="OpenTime" name="OpenTime" class="handleEnter" nextField="CloseTime" autocomplete="off"><br><br>
                         </div>
                         <div class="col-12">
                             <label for="closeTime">Time Closed:</label>
-                            <input type="text" id="CloseTime" name="CloseTime"><br><br>
+                            <input type="text" id="CloseTime" name="CloseTime" class="handleEnter" nextField="ExptHours" autocomplete="off"><br><br>
                         </div>
                         <div class="col-12">
                             <label for="exptHours">Expected Hours: </label>
-                            <input type="text" id="ExptHours" name="ExptHours"><br><br>
+                            <input type="text" id="ExptHours" name="ExptHours" class="handleEnter" nextField="OpenTime" autocomplete="off"><br><br>
                         </div>
                         <div class="row">
                             <div class="col-3" id="submitButton">
@@ -150,8 +150,13 @@
         $('#OpenTime').timeEntry({ show24Hours: true, showSeconds: false })
         $('#CloseTime').timeEntry({ show24Hours: true, showSeconds: false })
 
-        $(document).on("keydown", "form", function (event) {
-            return event.key != "Enter";
+        $(document).on("keydown", ".handleEnter", function (event, e) {
+            if (event.key == "Enter") {
+                var nextField = $(e).attr("nextField");
+                $("#" + nextField).focus();
+                return false;
+            }
+            return true;
         });
 
         function LoadListFromFilters() {
