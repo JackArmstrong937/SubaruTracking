@@ -28,6 +28,7 @@ namespace SubaruEfficiencyTracking
         {
             services.AddControllers();
             services.AddControllersWithViews();
+            services.AddSession();
 
             string RootPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
             RootPath = System.IO.Path.GetDirectoryName(RootPath);
@@ -45,7 +46,7 @@ namespace SubaruEfficiencyTracking
             }
 
             //app.UseHttpsRedirection();
-
+            app.UseSession();
             app.UseRouting();
             app.UseStaticFiles();
 

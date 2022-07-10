@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using SubaruEfficiencyTracking.Models;
 using SubaruEfficiencyTracking.Logic;
+using SubaruEfficiencyTracking.Attributes;
 
 namespace SubaruEfficiencyTracking.Controllers
 {
     [Route("Admin")]
+    [AuthorizeUsers("Admin")]
     public class AdminController : Controller
     {
         private IDBConnector _DB;
@@ -26,7 +25,7 @@ namespace SubaruEfficiencyTracking.Controllers
         }
 
         [Route("InitialSetup")]
-        public IActionResult InitialSetup(string dt )
+        public IActionResult InitialSetup(string dt, string pw )
         {
             if (dt == "Stores")
             {
@@ -36,7 +35,28 @@ namespace SubaruEfficiencyTracking.Controllers
                 newStore.StoreActive = true;
                 _DB.CreateRow<StoreLocationModel>(newStore);
             }
-            
+
+            if (dt == "Admin")
+            {
+                LoginCredentials newLogin = new LoginCredentials();
+                newLogin.LoginGuid = Guid.NewGuid();
+                newLogin.UserName = "subaruadmin";
+                newLogin.Password = pw;
+                newLogin.UserType = "Admin";
+                _DB.CreateRow<LoginCredentials>(newLogin);
+            }
+               
+            if (dt == "Tech")
+            {
+                LoginCredentials newLogin = new LoginCredentials();
+                newLogin.LoginGuid = Guid.NewGuid();
+                newLogin.UserName = "subarutech";
+                newLogin.Password = pw;
+                newLogin.UserType = "normalUser";
+                _DB.CreateRow<LoginCredentials>(newLogin);
+            }
+
+
 
             //TechModel newTech = new TechModel()
             //{

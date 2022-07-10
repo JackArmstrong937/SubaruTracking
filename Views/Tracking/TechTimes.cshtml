@@ -8,7 +8,7 @@
 
 
 <div class="row">
-    <div class="col-2 dropDownOption">
+    <div style="margin-left: 10px;" class="col-3 dropDownOption">
         <label for="timePeriod">Time Period: </label>
         <select id="timePeriod" onchange="LoadListFromFilters();">
             @foreach (PayPeriodModel Period in Model.PayPeriods)
@@ -17,7 +17,7 @@
             }
         </select><br><br>
     </div>
-    <div class="col-2 dropDownOption">
+    <div class="col-3 dropDownOption">
         <label for="StoreLocation">Store: </label>
         <select id="StoreLocation" onchange="LoadListFromFilters();">
             @foreach (StoreLocationModel store in Model.Stores)
@@ -26,7 +26,7 @@
             }
         </select><br><br>
     </div>
-    <div class="col-2 dropDownOption">
+    <div class="col-3 dropDownOption">
         <label for="TechFilter">Tech Filter:  </label>
         <select id="TechFilter" onchange="LoadListFromFilters();">
             @foreach (TechModel Tech in Model.Techs)
@@ -41,9 +41,10 @@
     <div class="col-1 infoDiv">Tech Number</div>
     <div class="col-1 infoDiv">Opened</div>
     <div class="col-1 infoDiv">Closed</div>
-    <div class="col-2 infoDiv">Time to Complete</div>
+    <div class="col-2 infoDiv">Hours to Complete</div>
     <div class="col-2 infoDiv">Expected Hours</div>
     <div class="col-2">Overall Efficiency</div>
+    <div class="col-1"></div>
 </div>
 <div id="TechStats">
     @if (Model.TechTimeDetails != null)
@@ -56,9 +57,10 @@
                 <div class="col-1 ">@currTech.TechNumber</div>
                 <div class="col-1 ">@t.OpenTime.ToString("HH:mm")</div>
                 <div class="col-1 ">@t.CloseTime.ToString("HH:mm")</div>
-                <div class="col-2 ">@t.TotalTime</div>
-                <div class="col-2 ">@t.ExptHours</div>
+                <div class="col-2 ">@t.TotalTime.ToString("f2")</div>
+                <div class="col-2 ">@t.ExptHours.ToString("f1")</div>
                 <div class="col-2 ">@t.overallEfficiency</div>
+                <div class="col-1"><a href="#" onclick="deleteRow('@t.TimeGuid');">Delete</a></div>
             </div>
         }
     }
@@ -67,12 +69,22 @@
 @section Scripts
     {
     <script type="text/javascript">
-        function LoadListFromFilters() {
+        function LoadListFromFilters()
+        {
             var url = "/Tracking/TechTimes?";
             url += "p=" + $("#timePeriod").val();
             url += "&t=" + $("#TechFilter").val();
             url += "&s=" + $("#StoreLocation").val();
             window.location = url;
+        }
+
+        function deleteRow(EntryGuid) {
+            if (confirm("Are you sure you want to delete this entry?"))
+            {
+                $.post("/Tracking/DeleteROEntry?ID=" + EntryGuid, function (data) {
+                    location.reload();
+                });
+            }
         }
     </script>
 }

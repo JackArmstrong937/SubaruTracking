@@ -1,4 +1,5 @@
 ﻿@using SubaruEfficiencyTracking.Models
+using Microsoft.AspNetCore.Http;
 @model RoEntryViewModel;
 @{
     ViewBag.HeaderTitle = "Efficiency Statistics";
@@ -9,7 +10,7 @@
 <div class="row">
     <div class="col-8">
         <div class="row">
-            <div class="col-4 dropDownOption">
+            <div style="margin-left: 10px;" class="col-5 dropDownOption">
                 <label for="timePeriod">Time Period: </label>
                 <select id="timePeriod" onchange="LoadListFromFilters();">
                     @foreach (PayPeriodModel Period in Model.PayPeriods)
@@ -18,7 +19,7 @@
                     }
                 </select><br><br>
             </div>
-            <div class="col-4 dropDownOption">
+            <div class="col-5 dropDownOption">
                 <label for="StoreLocation">Store: </label>
                 <select id="StoreLocation" onchange="LoadListFromFilters();">
                     @foreach (StoreLocationModel store in Model.Stores)
@@ -32,7 +33,7 @@
             <div class="col-2 infoDiv">Tech Name</div>
             <div class="col-2 infoDiv">Tech Number</div>
             <div class="col-2 infoDiv">Cars Completed</div>
-            <div class="col-2 infoDiv">Hours Turned</div>
+            <div class="col-2 infoDiv">Actual Hours</div>
             <div class="col-2 infoDiv">Expected Hours</div>
             <div class="col-2">Overall Efficiency</div>
         </div>
@@ -45,9 +46,9 @@
                         <div class="col-2"><a href="/Tracking/TechTimes/?t=@t.TechGuid&p=@Model.SelectedPayPeriodGuid&s=@Model.SelectedStoreGuid">@t.TechFirstName @t.TechLastName</a></div>
                         <div class="col-2 ">@Model.Techs.Find(m => m.TechGuid == t.TechGuid).TechNumber</div>
                         <div class="col-2 ">@t.CarsCompleted</div>
-                        <div class="col-2 ">@t.HoursTurned</div>
-                        <div class="col-2 ">@t.ExpectedHours</div>
-                        <div class="col-2 ">@((t.OverallEfficiency * 100).ToString("f2"))%</div>
+                        <div class="col-2 ">@t.HoursTurned.ToString("f1")</div>
+                        <div class="col-2 ">@t.ExpectedHours.ToString("f1")</div>
+                        <div class="col-2 ">@((t.OverallEfficiency * 100).ToString("f1"))%</div>
                     </div>
                 }
             }
@@ -57,50 +58,51 @@
         <div class="col-12" id="entrySection">
             <div id="entryHeader" class="col-12">RO Entries</div>
             <div id="ro-entry">
-                <form action="/Tracking/newEntry" method="post">
-                    <div class="col-12">
+                @if (Microsoft.AspNetCore.Mvc.)
+                    <form action="/Tracking/newEntry" method="post">
                         <div class="col-12">
-                            <input type="hidden" id="StoreGuid" name="StoreGuid" value="@Model.SelectedStoreGuid" />
-                            <label for="PayPeriodGuid">Pay Period: </label>
-                            <select id="PayPeriodGuid" name="PayPeriodGuid">
-                                @foreach (PayPeriodModel p in Model.PayPeriods)
-                                {
-                                    <option value="@p.PayPeriodGuid" @(p.PayPeriodGuid == Model.SelectedPayPeriodGuid ? "selected" : "")>@p.StartDate.ToShortDateString() - @p.EndDate.ToShortDateString()</option>
-                                }
-                            </select><br /><br />
-                            <label for="TechGuid">Technician: </label>
-                            <select id="TechGuid" name="TechGuid">
-                                <option value=""></option>
-                                @foreach (TechModel t in Model.Techs)
-                                {
-                                    <option value="@t.TechGuid">@t.TechFirstName @t.TechLastName - @t.TechNumber</option>
-                                }
-                            </select><br /><br />
-                        </div>
-                        <div class="col-12">
-                            <label for="openTime">Time Opened:</label>
-                            <input type="text" id="OpenTime" name="OpenTime" class="handleEnter" nextField="CloseTime" autocomplete="off"><br><br>
-                        </div>
-                        <div class="col-12">
-                            <label for="closeTime">Time Closed:</label>
-                            <input type="text" id="CloseTime" name="CloseTime" class="handleEnter" nextField="ExptHours" autocomplete="off"><br><br>
-                        </div>
-                        <div class="col-12">
-                            <label for="exptHours">Expected Hours: </label>
-                            <input type="text" id="ExptHours" name="ExptHours" class="handleEnter" nextField="OpenTime" autocomplete="off"><br><br>
-                        </div>
-                        <div class="row">
-                            <div class="col-3" id="submitButton">
-                                <input type="submit" value="Submit" onclick="return SubmitCheck();" style="margin-right: 20px; margin-bottom: 20px; border-radius: 25px; ">
-                            </div><br />
-                            <div class="col-5" id="submitMessage" style="@(Model.RoEntry ? "" : "display: none;")">Entry Submitted!</div>
-                            <div id="ErrorMessage" style="display: none;">
-                                One or more entry field is not filled out, try again!
+                            <div class="col-12">
+                                <input type="hidden" id="StoreGuid" name="StoreGuid" value="@Model.SelectedStoreGuid" />
+                                <label for="PayPeriodGuid">Pay Period: </label>
+                                <select id="PayPeriodGuid" name="PayPeriodGuid">
+                                    @foreach (PayPeriodModel p in Model.PayPeriods)
+                                    {
+                                        <option value="@p.PayPeriodGuid" @(p.PayPeriodGuid == Model.SelectedPayPeriodGuid ? "selected" : "")>@p.StartDate.ToShortDateString() - @p.EndDate.ToShortDateString()</option>
+                                    }
+                                </select><br /><br />
+                                <label for="TechGuid">Technician: </label>
+                                <select id="TechGuid" name="TechGuid">
+                                    <option value=""></option>
+                                    @foreach (TechModel t in Model.Techs)
+                                    {
+                                        <option value="@t.TechGuid">@t.TechFirstName @t.TechLastName - @t.TechNumber</option>
+                                    }
+                                </select><br /><br />
                             </div>
-                            <div class="col-3"></div>
+                            <div class="col-12">
+                                <label for="openTime">Time Opened:</label>
+                                <input type="text" id="OpenTime" name="OpenTime" class="handleEnter" nextField="CloseTime" autocomplete="off" style="width: 52px"><br><br>
+                            </div>
+                            <div class="col-12">
+                                <label for="closeTime">Time Closed:</label>
+                                <input type="text" id="CloseTime" name="CloseTime" class="handleEnter" nextField="ExptHours" autocomplete="off" style="width: 52px"><br><br>
+                            </div>
+                            <div class="col-12">
+                                <label for="exptHours">Expected Hours: </label>
+                                <input type="text" id="ExptHours" name="ExptHours" class="handleEnter" nextField="OpenTime" autocomplete="off" style="width: 50px"><br><br>
+                            </div>
+                            <div class="row">
+                                <div class="col-3" id="submitButton">
+                                    <input class="submit" type="submit" value="Submit" onclick="return SubmitCheck();" style="margin-right: 20px; margin-bottom: 20px; border-radius: 25px; ">
+                                </div><br />
+                                <div class="col-5" id="submitMessage" style="@(Model.RoEntry ? "" : "display: none;")">Entry Submitted!</div>
+                                <div id="ErrorMessage" style="display: none; margin-bottom: 10px;">
+                                    One or more entry field is not filled out, try again!
+                                </div>
+                                <div class="col-3"></div>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
             </div>
             @*<div class="col-12">
                     <div class="row" id="entryResults">

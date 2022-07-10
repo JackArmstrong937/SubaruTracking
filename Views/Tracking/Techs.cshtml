@@ -44,7 +44,7 @@
         </div>
     </div>
     <div class="col-4">
-        <div class="col-12" id="entrySection">
+        <div class="col-12" id="entrySection" style="margin-top: 20px !important">
             <div id="entryHeader" class="col-12">@(Model.EditingTech.TechGuid == Guid.Empty ? "Add New Technician" : "Edit Technician")</div>
             <div id="ro-entry">
                 <form action="/Tracking/newTech" method="post">
@@ -73,16 +73,16 @@
                     <div class="col-12" style="@(Model.EditingTech.TechGuid == Guid.Empty ? "display:none;" : "")">
                         <label for="Active">Active:</label>
                         <input type="checkbox" @(Model.EditingTech.TechActive ? "checked" : "") onchange="$('#TechActive').val($(this).is(':checked'));"><br><br>
-                        <input type="hidden" id="TechActive" name="TechActive" value="@(Model.EditingTech.TechActive ? "true" : "false")"/>
+                        <input type="hidden" id="TechActive" name="TechActive" value="@(Model.EditingTech.TechActive ? "true" : "false")" />
                     </div>
                     <div class="row">
                         <div class="col-3" id="submitButton">
-                            <input type="submit" value="Submit" onclick="return SubmitCheck();" style="margin-right: 20px; margin-bottom: 20px; border-radius: 25px;">
+                            <input class="submit" type="submit" value="Submit" onclick="return SubmitCheck();" style="margin-right: 20px; margin-bottom: 20px; border-radius: 25px;">
                         </div>
                         <div class="col-8">
                             <div id="submitMessage" style="@(Model.AddedTech ? "" : "display: none;")">New Technician Added!</div>
                             <div id="updateMessage" style="@(Model.UpdatedTech ? "" : "display: none;")">Technician Updated!</div>
-                            <div id="ErrorMessage" style="display: none;">
+                            <div id="ErrorMessage" style="display: none; margin-bottom: 10px;">
                                 One or more entry field is not filled out, try again!
                             </div>
                         </div>

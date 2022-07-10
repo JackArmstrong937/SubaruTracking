@@ -6,11 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\Includes\Images\SubaruLoginBackground.jpg" />
     <Content Remove="wwwroot\Includes\Images\SubaruLogo.jpg" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="wwwroot\Includes\css\subaru_app.css" />
+    <None Include="wwwroot\Includes\Images\SubaruLoginBackground.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="wwwroot\Includes\Images\SubaruLogo.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

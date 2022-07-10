@@ -28,7 +28,7 @@ namespace SubaruEfficiencyTracking.Models
         {
             get
             {
-                return Math.Abs(((ExptHours / TotalTime)*100)).ToString() + "%";
+                return Math.Abs(((ExptHours / TotalTime)*100)).ToString("f1") + "%";
             }
             set { }
         }

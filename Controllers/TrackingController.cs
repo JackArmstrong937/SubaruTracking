@@ -2,13 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using SubaruEfficiencyTracking.Models;
 using SubaruEfficiencyTracking.Logic;
+using SubaruEfficiencyTracking.Attributes;
 
 namespace SubaruEfficiencyTracking.Controllers
 {
     [Route("Tracking")]
+    [AuthorizeUsers("Admin,normalUser")]
     public class TrackingController : Controller
     {
         private IDBConnector _DB;
@@ -142,6 +143,18 @@ namespace SubaruEfficiencyTracking.Controllers
             }
 
             return View(ModelData);
+        }
+
+        [Route("DeleteROEntry")]
+        [HttpPost]
+        public IActionResult DeleteROEntry(Guid ID)
+        {
+            TimeModel deleteVar = _DB.SelectRows<TimeModel>().Find(m => m.TimeGuid == ID);
+            if (deleteVar != null){
+                _DB.DeleteRow<TimeModel>(deleteVar);
+                return Ok();
+            }
+            return BadRequest();
         }
     }
 }
