@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -14,9 +16,9 @@
 </head>
 <body class="mainBody" style="background-color: rgb(60, 60, 60); overflow-x: hidden;">
     <div class="row">
-        <div class="col-6" id="headerTitle" style="background-color: rgb(34, 34, 34); border-radius: 10px">
+        <div class="col-6" id="headerTitle">
             <image id="logo" src="/Includes/Images/SubaruLogo.jpg" style="box-shadow: -2px 2px 8px black"></image>
-            Subaru Lube Techs
+            Subaru Lube Tech
             @ViewBag.HeaderTitle
         </div>
         <div class="col-6" id="pageTabs">
@@ -26,9 +28,12 @@
             <div class="linkDiv col-1">
                 <a href="/Tracking/TechTimes">Entries</a>
             </div>
-            <div class="linkDiv col-1">
-                <a href="/Tracking/Techs">Techs</a>
-            </div>
+            @if (Context.Session.GetString("UserType") == "Admin")
+            {
+                <div class="linkDiv col-1">
+                    <a href="/Tracking/Techs">Techs</a>
+                </div>
+            }
             <div class="linkDiv col-1">
                 <a href="/Tracking/ROClock">RO-Clock</a>
             </div>
@@ -41,11 +46,21 @@
         @RenderBody()
     </div>
 </body>
-    @RenderSection("Scripts", false)
+<footer></footer>
+@RenderSection("Scripts", false)
 </html>
 
 <script type="text/javascript">
     $(".ParentList").click(function () {
         $(this).parent().find("ul").toggle();
     });
+
+    $(document).ready(function () {
+        setInterval(SetBrowersActive, 180000);
+    });
+    
+    function SetBrowersActive() {
+       $.ajax("/Tracking/SessionActive/").success(function (result) { });
+    };
+    
 </script>

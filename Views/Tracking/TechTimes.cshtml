@@ -1,15 +1,17 @@
 ﻿@using SubaruEfficiencyTracking.Models
+@using Microsoft.AspNetCore.Http
+
 @model RoEntryViewModel;
 @{
-    ViewBag.HeaderTitle = "Detailed Report";
+    ViewBag.HeaderTitle = "RO Entries";
 
     Layout = "~/Views/Shared/Layout.cshtml";
 }
 
 
 <div class="row">
-    <div style="margin-left: 10px;" class="col-3 dropDownOption">
-        <label for="timePeriod">Time Period: </label>
+    <div class="col-3 dropDownOption">
+        <label for="timePeriod" style="padding-left: 10px !important">Pay Period: </label>
         <select id="timePeriod" onchange="LoadListFromFilters();">
             @foreach (PayPeriodModel Period in Model.PayPeriods)
             {
@@ -17,60 +19,183 @@
             }
         </select><br><br>
     </div>
+    @*<div class="col-3 dropDownOption">
+            <label for="StoreLocation">Store: </label>
+            <select id="StoreLocation" onchange="LoadListFromFilters();">
+                @foreach (StoreLocationModel store in Model.Stores)
+                {
+                    <option value="@store.StoreGuid" @(store.StoreGuid == Model.SelectedStoreGuid ? "selected" : "")>@store.StoreName</option>
+                }
+            </select><br><br>
+        </div>*@
     <div class="col-3 dropDownOption">
-        <label for="StoreLocation">Store: </label>
-        <select id="StoreLocation" onchange="LoadListFromFilters();">
-            @foreach (StoreLocationModel store in Model.Stores)
+        <label for="TechFilter">Technician:  </label>
+        <select id="TechFilter" onchange="LoadListFromFilters();">
+            <option value="">--Select Technician--</option>
+            @foreach (TechModel Tech in Model.Techs)
             {
-                <option value="@store.StoreGuid" @(store.StoreGuid == Model.SelectedStoreGuid ? "selected" : "")>@store.StoreName</option>
+                @if (Tech.TechActive == true)
+                {
+                    <option value="@Tech.TechGuid" @(Tech.TechGuid == Model.SelectedTechGuid ? "selected" : "")>@Tech.TechFirstName @Tech.TechLastName - @Tech.TechNumber </option>
+                }
             }
         </select><br><br>
     </div>
+    <div class="col-3"></div>
     <div class="col-3 dropDownOption">
-        <label for="TechFilter">Tech Filter:  </label>
-        <select id="TechFilter" onchange="LoadListFromFilters();">
-            @foreach (TechModel Tech in Model.Techs)
-            {
-                <option value="@Tech.TechGuid" @(Tech.TechGuid == Model.SelectedTechGuid ? "selected" : "")>@Tech.TechFirstName @Tech.TechLastName - @Tech.TechNumber </option>
-            }
-        </select><br><br>
+        <label for="roNumberSearch">RO Number: </label>
+        <input type="text" class="roNumber" id="roNumberSearch" name="roNumberSearch" autocomplete="off" style="width: 70px;border: 2px solid black; border-radius: 5px;" />
+        <button onclick="searchRONumber();" id="RoSearchButton" style="border-radius: 10px; background-color: #283bff; color: white;">Search</button>
     </div>
 </div>
 <div class="row" id="infoHeader">
     <div class="col-2 infoDiv">Tech Name</div>
     <div class="col-1 infoDiv">Tech Number</div>
+    <div class="col-1 infoDiv">Ro Number</div>
+    <div class="col-1 infoDiv">Ro Date</div>
     <div class="col-1 infoDiv">Opened</div>
     <div class="col-1 infoDiv">Closed</div>
-    <div class="col-2 infoDiv">Hours to Complete</div>
-    <div class="col-2 infoDiv">Expected Hours</div>
-    <div class="col-2">Overall Efficiency</div>
-    <div class="col-1"></div>
+    <div class="col-1 infoDiv">Open-Close Hours</div>
+    <div class="col-1 infoDiv">Expected Hours</div>
+    <div class="col-1 infoDiv">Open-Close Efficiency</div>
+    <div class="col-2">RO-Clock Efficiency</div>
 </div>
 <div id="TechStats">
     @if (Model.TechTimeDetails != null)
     {
+    @*Show entries with ro-clock time*@
         foreach (TimeModel t in Model.TechTimeDetails)
         {
-            TechModel currTech = Model.Techs.Find(m => m.TechGuid == t.TechGuid);
-            <div class="row altRowColors">
-                <div class="col-2">@currTech.TechFirstName @currTech.TechLastName</div>
-                <div class="col-1 ">@currTech.TechNumber</div>
-                <div class="col-1 ">@t.OpenTime.ToString("HH:mm")</div>
-                <div class="col-1 ">@t.CloseTime.ToString("HH:mm")</div>
-                <div class="col-2 ">@t.TotalTime.ToString("f2")</div>
-                <div class="col-2 ">@t.ExptHours.ToString("f1")</div>
-                <div class="col-2 ">@t.overallEfficiency</div>
-                <div class="col-1"><a href="#" onclick="deleteRow('@t.TimeGuid');">Delete</a></div>
-            </div>
+            if (t.ExptHours > 0 && t.RoClockoverallEfficiency > 0)
+            {
+                TechModel currTech = Model.Techs.Find(m => m.TechGuid == t.TechGuid);
+                <div class="row altRowColors @(t.ExptHours > 0 ? "" : "incompleteRow")">
+                    <div class="col-2">@currTech.TechFirstName @currTech.TechLastName</div>
+                    <div class="col-1">@currTech.TechNumber</div>
+                    <div class="col-1">@t.RoNumber</div>
+                    <div class="col-1">@t.OpenTime.ToString("MM/dd/yy")</div>
+                    <div class="col-1">@t.OpenTime.ToString("HH:mm")</div>
+                    <div class="col-1">@t.CloseTime.ToString("HH:mm")</div>
+                    <div class="col-1">@t.TotalTime.ToString("f2")</div>
+                    <div class="col-1">@t.ExptHours.ToString("f1")</div>
+                    <div class="col-1" style="@if (Context.Session.GetString("UserType") == "Admin"){@(t.overallEfficiency < 40 || t.overallEfficiency > 150 ? "border: 2px solid red; border-radius: 10px": "")}">
+                        @t.overallEfficiency.ToString("f1")%
+                    </div>
+                    <div class="col-2" style="@if (Context.Session.GetString("UserType") == "Admin"){@(t.RoClockoverallEfficiency < 40 && t.RoClockoverallEfficiency > 0 || t.RoClockoverallEfficiency > 240 ? "border: 2px solid red; border-radius: 10px": "")}">
+                        @Html.Raw(t.RoClockoverallEfficiency == 0.0 ? "" : t.RoClockoverallEfficiency.ToString("f1") + "%  (" + t.RoClockTotalTime.ToString("f2") + " hrs)")
+                        @if (Context.Session.GetString("UserType") == "Admin"){<a href="#" style="float:right" onclick="deleteRow('@t.TimeGuid');">Delete</a>}<br />
+                        @Html.Raw("Start-(" + t.RoClockOpenTime.ToString("HH:mm") + ") | " + "Stop-(" + t.RoClockCloseTime.ToString("HH:mm") +")")
+
+                    </div>
+                    
+                   
+
+                    @*<div class="col-1" style="@if (Context.Session.GetString("UserType") == "Admin"){@(t.RoClockoverallEfficiency < 40 && t.RoClockoverallEfficiency > 0 || t.RoClockoverallEfficiency > 190 ? "border: 2px solid red": "")}">
+                        @Html.Raw(t.RoClockoverallEfficiency == 0.0 ? "" : t.RoClockoverallEfficiency.ToString("f1") + "%<br>(" + t.RoClockTotalTime.ToString("f2") + " hrs)")
+                    </div>
+                    
+                    @if (Context.Session.GetString("UserType") == "Admin")
+                    {
+                        <div class="col-1">
+                            <a href="#" onclick="deleteRow('@t.TimeGuid');">Delete</a>
+                        </div>
+                    }*@
+
+                    @*show red flag icon, commented out for now if want to use later*@
+                    @*<image class="redFlagIcon" src="/Includes/Images/flagIcon.png" style="@(t.overallEfficiency < 40 || t.overallEfficiency > 150 ? "" : "display: none;")"></image>*@
+                </div>
+            }
+
+        }
+    @*Show entries without ro-clock time*@
+        foreach (TimeModel t in Model.TechTimeDetails)
+        {
+            if (t.ExptHours > 0 && t.RoClockoverallEfficiency == 0)
+            {
+                TechModel currTech = Model.Techs.Find(m => m.TechGuid == t.TechGuid);
+                <div class="row altRowColors @(t.ExptHours > 0 ? "" : "incompleteRow")">
+                    <div class="col-2">@currTech.TechFirstName @currTech.TechLastName</div>
+                    <div class="col-1">@currTech.TechNumber</div>
+                    <div class="col-1">@t.RoNumber</div>
+                    <div class="col-1">@t.OpenTime.ToString("MM/dd/yy")</div>
+                    <div class="col-1">@t.OpenTime.ToString("HH:mm")</div>
+                    <div class="col-1">@t.CloseTime.ToString("HH:mm")</div>
+                    <div class="col-1">@t.TotalTime.ToString("f2")</div>
+                    <div class="col-1">@t.ExptHours.ToString("f1")</div>
+                    <div class="col-1" style="@if (Context.Session.GetString("UserType") == "Admin"){@(t.overallEfficiency < 40 || t.overallEfficiency > 150 ? "border: 2px solid red; border-radius: 10px": "")}">
+                        @t.overallEfficiency.ToString("f1")%
+                    </div>
+                    <div class="col-1" style="@if (Context.Session.GetString("UserType") == "Admin"){@(t.RoClockoverallEfficiency < 40 && t.RoClockoverallEfficiency > 0 || t.RoClockoverallEfficiency > 200 ? "border: 2px solid red; border-radius: 10px": "")}">
+                        @Html.Raw(t.RoClockoverallEfficiency == 0.0 ? "" : t.RoClockoverallEfficiency.ToString("f1") + "%<br>(" + t.RoClockTotalTime.ToString("f2") + " hrs)")
+                    </div>
+                    
+                    @if (Context.Session.GetString("UserType") == "Admin")
+                    {
+                        <div class="col-1">
+                            <a href="#" onclick="deleteRow('@t.TimeGuid');">Delete</a>
+                        </div>
+                    }
+
+                    @*show red flag icon, commented out for now if want to use later*@
+                    @*<image class="redFlagIcon" src="/Includes/Images/flagIcon.png" style="@(t.overallEfficiency < 40 || t.overallEfficiency > 150 ? "" : "display: none;")"></image>*@
+                </div>
+            }
         }
     }
+</div>
+<br />
+<button type="button" class="btn btn-primary showActiveTechsBtn" id="activeTechBtn" onclick="showEntries();">Show @Model.ROCarsIncomplete Incomplete Entries</button><br />
+<div class="incompletedEntriesDropDown"  id="incompletedEntries" style="display:none">
+    <div class="row" id="infoHeader">
+        <div class="col-2 infoDiv">Tech Name</div>
+        <div class="col-1 infoDiv">Tech Number</div>
+        <div class="col-1 infoDiv">Ro Number</div>
+        <div class="col-1 infoDiv">Ro Date</div>
+        <div class="col-1 infoDiv">Opened</div>
+        <div class="col-1 infoDiv">Closed</div>
+        <div class="col-1 infoDiv">Hours to Complete</div>
+        <div class="col-1 infoDiv">Expected Hours</div>
+        <div class="col-1 infoDiv">Open-Close Efficiency</div>
+        <div class="col-2">RO-Clock Efficiency</div>
+        <div class="col-1"></div>
+    </div>
+    <div id="TechStats">
+        @if (Model.TechTimeDetails != null)
+        {
+        @*Show incomplete ro Entries*@
+            foreach (TimeModel t in Model.TechTimeDetails)
+            {
+                if (t.ExptHours <= 0)
+                {
+                    TechModel currTech = Model.Techs.Find(m => m.TechGuid == t.TechGuid);
+                    <div class="row altRowColors @(t.ExptHours > 0 ? "" : "incompleteRow")">
+                        <div class="col-2">@currTech.TechFirstName @currTech.TechLastName</div>
+                        <div class="col-1">@currTech.TechNumber</div>
+                        <div class="col-1">@t.RoNumber</div>
+                        <div class="col-1">@t.OpenTime.ToString("MM/dd/yy")</div>
+                        <div class="col-1">@t.OpenTime.ToString("HH:mm")</div>
+                        <div class="col-1">@t.CloseTime.ToString("HH:mm")</div>
+                        <div class="col-1">@t.TotalTime.ToString("f2")</div>
+                        <div class="col-1">@t.ExptHours.ToString("f1")</div>
+                        <div class="col-1">@t.overallEfficiency.ToString("f1")%</div>
+                        <div class="col-1">@Html.Raw(t.RoClockoverallEfficiency == 0.0 ? "" : t.RoClockoverallEfficiency.ToString("f1") + "%<br>(" + t.RoClockTotalTime.ToString("f2") + " hrs)")</div>
+                        
+                        @if (Context.Session.GetString("UserType") == "Admin")
+                        {
+                            <div class="col-1"><a href="#" onclick="deleteRow('@t.TimeGuid');">Delete</a></div>
+                        }
+                    </div>
+                }
+
+            }
+        }
+    </div>
 </div>
 
 @section Scripts
     {
     <script type="text/javascript">
-        function LoadListFromFilters()
-        {
+        function LoadListFromFilters() {
             var url = "/Tracking/TechTimes?";
             url += "p=" + $("#timePeriod").val();
             url += "&t=" + $("#TechFilter").val();
@@ -79,12 +204,23 @@
         }
 
         function deleteRow(EntryGuid) {
-            if (confirm("Are you sure you want to delete this entry?"))
-            {
+            if (confirm("Are you sure you want to delete this entry?")) {
                 $.post("/Tracking/DeleteROEntry?ID=" + EntryGuid, function (data) {
                     location.reload();
                 });
             }
         }
+
+        function searchRONumber() {
+            var url = "/Tracking/TechTimes?";
+            url += "ro=" + $("#roNumberSearch").val();
+            window.location = url;
+        }
+
+        function showEntries() {
+            $("#incompletedEntries").slideToggle();
+        }
     </script>
+    <script src="~/Includes/js/cdnjs/cleave.min.js"></script>
+    <script src="~/Includes/js/CleaveMain.js"></script>
 }

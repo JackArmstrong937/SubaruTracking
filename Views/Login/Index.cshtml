@@ -17,14 +17,14 @@
         <div class="col-12">
             <div class="loginTitle">
                 <image id="logo" src="/Includes/Images/SubaruLogo.jpg" style="box-shadow: -2px 2px 8px black"></image>
-                Subaru of Beechmont Efficiency Tracking
+                Subaru of Beechmont Lube Tech Efficiencies
             </div>
             <br>
             <div style="text-align:center; font-size: xx-large; margin-top: 20px; margin-bottom: 10px; text-shadow: 2px 2px 2px rgb(156, 156, 156);">Login</div>
             <div class="row">
                 <div class="col-4"></div>
                 <div class=" loginBox col-4">
-                    <form action="/Login/Index" method="post">
+                    <form action="/Login/Index" method="post" class="loginForm">
                         <br>
                         <div class="">
                             <label for="userName">Username: </label>
@@ -40,7 +40,7 @@
                         <div id="submitButton">
                             <input type="submit" value="Sign In" onclick="" class="loginButton">
                             <br><br>
-                            <div id="LoginMessage" style="color: red">@ViewBag.failureMessage</div>
+                            <div id="LoginMessage" style="color: red; margin-left: 30px">@ViewBag.failureMessage</div>
                         </div><br />
                     </form>
                 </div>
@@ -49,6 +49,7 @@
         </div>
     </div>
 </body>
+<footer class="contactFooter">Need help? <br /> Call or text 937-218-8213</footer>
 </html>
 <script type="text/javascript">
    

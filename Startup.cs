@@ -46,7 +46,10 @@ namespace SubaruEfficiencyTracking
             }
 
             //app.UseHttpsRedirection();
-            app.UseSession();
+            app.UseSession(new SessionOptions()
+            {
+                IdleTimeout = new TimeSpan(3, 0, 0)
+            });
             app.UseRouting();
             app.UseStaticFiles();
 

@@ -1,3 +1,22 @@
+footer{
+    margin-bottom: 40px;
+}
+
+.contactFooter {
+    color: white;
+    text-align: center;
+    background-color: rgb(34, 34, 34);
+    position: fixed;
+    bottom: 0;
+    padding: 20px;
+    right: 0;
+    margin-bottom: 0px !important;
+    border-radius: 32px 0px 0px 0px;
+    border-left: 3px solid black;
+    border-top: 3px solid black;
+    font-size: 18px;
+}
+
 #headerTitle {
     font-size: 30px;
     color: white;
@@ -5,7 +24,10 @@
     padding-left: 20px;
     border-bottom: 4px solid blue;
     margin-left: 0px;
-    text-shadow: 2px 2px 2px rgb(116, 116, 116);
+    background-color: rgb(34, 34, 34);
+    border-radius: 0px 0px 90px 0px;
+    font-family: sans-serif;
+    box-shadow: 4px 4px 15px 3px black;
 }
 
 .dropDownOption {
@@ -34,9 +56,9 @@
     padding: 5px;
     padding-left: 2px;
     border-radius: 5px;
-    margin-left: 8px;
+    margin-left: 5px;
     margin-right: 0px;
-    margin-top: 20px;
+    margin-top:10px;
     text-align: left;
     border: 3px solid rgb(255, 255, 42);
 }
@@ -58,7 +80,8 @@
 #entrySection {
     border: 4px solid black;
     background-color: rgb(225, 225, 225);
-    margin-top: 60px;
+    border-radius:5px;
+    /*margin-top: 18px;*/
 }
 
 #ro-entry {
@@ -133,6 +156,12 @@
     font-weight: bold;
 }
 
+#RoClockSubmitMessage {
+    color: green;
+    font-weight: bold;
+    text-align:center;
+}
+
 #updateMessage {
     color: green;
     font-weight: bold;
@@ -159,20 +188,21 @@
 }
 
 .submit:hover {
-   background-color: grey;
-   color: white;
+    background-color: rgb(69 120 255);
+    color: white;
 }
 
-/*select:hover {
-    
-}
-*/
 .altRowColors:nth-child(odd) {
     background-color: lightgray;
 }
 
 .altRowColors:nth-child(even) {
     background-color: white;
+}
+
+.incompleteRow {
+    background-color: rgb(158 158 158) !important;
+    color: rgb(34, 34, 34) !important;
 }
 
 .ClockDiv {
@@ -193,8 +223,10 @@
     padding: 20px;
     padding-left: 20px;
     border-bottom: 4px solid blue;
-    text-shadow: 2px 2px 2px rgb(116, 116, 116);
     text-align: center;
+    border-radius: 0px 0px 90px 90px;
+    box-shadow: 0px 0px 10px 6px black;
+    font-family:sans-serif;
 }
 
 .loginBox {
@@ -213,8 +245,120 @@
     color: white;
     width: 200px;
     border-radius: 5px;
+    margin-left: 20px;
 }
 
     .loginButton:hover {
         background-color: rgb(39, 73, 199);
     }
+
+.clockButton:hover {
+    background-color: rgb(39, 73, 199);
+    color: white;
+}
+
+#mainstopwatch {
+    
+    padding-bottom:2px;
+    text-align: center;
+    background: #e0e0e0;
+    border-radius: 40px;
+    background: #e0e0e0;
+}
+
+    #mainstopwatch span {
+        background: #c7e0f8;
+        color: #0776de;
+        font-size: 40px;
+        padding: 5px;
+        width: 55px;
+        margin: 3px;
+        display: inline-block;
+        background: #e0e0e0;
+    }
+
+
+
+.EfficiencyStatBox{
+    background-color: rgb(34,34,34);
+    border: 3px solid black;
+    border-radius: 15px;
+
+}
+    .combEfficTitle{
+        color: white;
+        text-align:center;
+        border-bottom: 3px solid blue;
+        font-size:18px;
+        font-weight: bold;
+    }
+
+    .CombinedEfficny {
+        color: white;
+        text-align:center !important;
+    }
+
+        .CombinedEfficny output {
+            border: 3px solid black;
+            background-color: white;
+            border-radius: 5px;
+            padding: 2px;
+            color: black;
+            box-shadow: 0px 0px 3px white;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        .CombinedEfficny label{
+            font-weight: bold;
+        }
+
+.ROSearchSection {
+    background-color: white;
+    border: 4px solid black;
+    margin-top: 10px;
+}
+
+.ROSearchSection h1{
+    background-color: rgb(34, 34, 34);
+    color: white;
+}
+
+#RoSearchButton:hover {
+    background-color: rgb(69 120 255) !important;
+}
+
+.DownloadBtn {
+    font-size: 17px;
+    margin-top: 19px !important;
+}
+
+button:hover {
+    background-color: rgb(69 120 255);
+    color: black;
+}
+
+input:focus
+{
+    outline: none !important;
+}
+
+select:focus{
+    outline: none !important;
+}
+
+.showActiveTechsBtn {
+    margin-top: 10px;
+    border:2px solid black !important;
+    margin-left:5px;
+}
+
+.btn:focus{
+    outline:none !important;
+    box-shadow: none !important;
+}
+
+.redFlagIcon {
+    width: 50px;
+    height: 30px;
+}

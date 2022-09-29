@@ -1,10 +1,11 @@
 ﻿@using SubaruEfficiencyTracking.Models
 @model TechAdminModel;
 @{
-    ViewBag.HeaderTitle = "List/Edit";
+    ViewBag.HeaderTitle = "List / Edit";
 
     Layout = "~/Views/Shared/Layout.cshtml";
 }
+<br />
 <div class="row">
     <div class="col-8">
         <div class="row" id="infoHeader">
@@ -29,22 +30,39 @@
                         <div class="col-2 ">@(t.TechActive ? "Yes":"No")</div>
                     </div>
                 }
-                foreach (TechModel t in Model.Techs.FindAll(m => m.TechActive == false))
-                {
-                    <div class="row altRowColors">
-                        <div class="col-1"><a href="/Tracking/Techs?t=@t.TechGuid">Edit</a></div>
-                        <div class="col-2">@t.TechFirstName</div>
-                        <div class="col-2">@t.TechLastName</div>
-                        <div class="col-2 ">@t.TechNumber</div>
-                        <div class="col-3 ">@Model.Stores.Find(m => m.StoreGuid == t.StoreGuid).StoreName</div>
-                        <div class="col-2 ">@(t.TechActive ? "Yes":"No")</div>
-                    </div>
-                }
             }
+        </div>
+        <br />
+        <button type="button" class="btn btn-primary showActiveTechsBtn" id="activeTechBtn" onclick="showTech();">Show Inactive Lube Techs</button><br />
+        <div class="nonActiveTechsDropDown"  id="inActiveTechs" style="display:none">
+            <div class="row" id="infoHeader">
+                <div class="col-1"></div>
+                <div class="col-2 infoDiv">First Name</div>
+                <div class="col-2 infoDiv">Last Name</div>
+                <div class="col-2 infoDiv">Tech Number</div>
+                <div class="col-3 infoDiv">Store</div>
+                <div class="col-2">Active</div>
+            </div>
+            <div id="TechStats">
+                @if (Model.Techs != null)
+                {
+                    foreach (TechModel t in Model.Techs.FindAll(m => m.TechActive == false))
+                    {
+                        <div class="row altRowColors">
+                            <div class="col-1"><a href="/Tracking/Techs?t=@t.TechGuid">Edit</a></div>
+                            <div class="col-2">@t.TechFirstName</div>
+                            <div class="col-2">@t.TechLastName</div>
+                            <div class="col-2 ">@t.TechNumber</div>
+                            <div class="col-3 ">@Model.Stores.Find(m => m.StoreGuid == t.StoreGuid).StoreName</div>
+                            <div class="col-2 ">@(t.TechActive ? "Yes":"No")</div>
+                        </div>
+                    }
+                }
+            </div>
         </div>
     </div>
     <div class="col-4">
-        <div class="col-12" id="entrySection" style="margin-top: 20px !important">
+        <div class="col-12" id="entrySection" style="margin-top: 8px !important">
             <div id="entryHeader" class="col-12">@(Model.EditingTech.TechGuid == Guid.Empty ? "Add New Technician" : "Edit Technician")</div>
             <div id="ro-entry">
                 <form action="/Tracking/newTech" method="post">
@@ -62,7 +80,7 @@
                         <input type="text" id="TechNumber" name="TechNumber" value="@Model.EditingTech.TechNumber"><br><br>
                     </div>
                     <div class="col-12">
-                        <label for="techStore">Tech Store: </label>
+                        <label for="techStore">Dealership: </label>
                         <select id="StoreGuid" name="StoreGuid">
                             @foreach (StoreLocationModel store in Model.Stores)
                             {
@@ -83,7 +101,7 @@
                             <div id="submitMessage" style="@(Model.AddedTech ? "" : "display: none;")">New Technician Added!</div>
                             <div id="updateMessage" style="@(Model.UpdatedTech ? "" : "display: none;")">Technician Updated!</div>
                             <div id="ErrorMessage" style="display: none; margin-bottom: 10px;">
-                                One or more entry field is not filled out, try again!
+                                One or more entry fields is not filled out, try again!
                             </div>
                         </div>
                     </div>
@@ -119,5 +137,9 @@
         $(document).on("keydown", "form", function (event) {
             return event.key != "Enter";
         });
+
+        function showTech() {
+            $("#inActiveTechs").slideToggle();
+        }
     </script>
 }

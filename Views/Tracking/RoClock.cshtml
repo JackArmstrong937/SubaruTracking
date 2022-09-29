@@ -5,42 +5,248 @@
 
     Layout = "~/Views/Shared/Layout.cshtml";
 }
-<br /><br />
+<br />
+<br />
 <div class="col-12 d-flex justify-content-center">
-    <div class="col-6 ClockBox" id="entrySection" >
+    <div class="col-6 ClockBox" id="entrySection">
         <div class="col-12">
-            <div id="entryHeader">RO-Clock</div>
-            <div class="col-6">
-
-            </div>
-            <div class="row ClockDiv" >
-                <div>
-                    <label for="TechGuid">Technician: </label>
-                    <select id="TechGuid" name="TechGuid">
-                        <option value=""></option>
-                        @foreach (TechModel t in Model.Techs)
-                         {
-                           <option value="@t.TechGuid">@t.TechFirstName @t.TechLastName - @t.TechNumber</option>
-                         }
-                    </select><br /><br />
+            <form action="/Tracking/RoClockSave" method="Post"  id="RoClockForm" onsubmit="return SubmitCheck()">
+                <input type="hidden" id="StoreGuid" name="StoreGuid" value="@Model.SelectedStoreGuid" />
+                <input type="hidden" id="PayPeriodGuid" name="PayPeriodGuid" value="@Model.SelectedPayPeriodGuid" />
+                <input type="hidden" id="RoClockOpenTime" name="RoClockOpenTime" value="" />
+                <input type="hidden" id="RoClockCloseTime" name="RoClockCloseTime" value="" />
+                <input type="hidden" id="ExptHours" name="ExptHours" value="0" />
+                <div id="entryHeader">RO-Clock</div>
+                <div class="col-6"></div>
+                <div class="row ClockDiv">
+                    <div class="col-6">
+                        <label for="TechGuid">Technician: </label>
+                        <select id="TechGuid" name="TechGuid">
+                            <option value="">--Select Technician--</option>
+                            @foreach (TechModel t in Model.Techs)
+                            {
+                                @if (t.TechActive == true)
+                                {
+                                    <option value="@t.TechGuid">@t.TechFirstName @t.TechLastName - @t.TechNumber</option>
+                                }
+                            }
+                        </select><br /><br />
+                    </div>
+                    <div class="col-6">
+                        <label for="roNumber">RO Number: </label>
+                        <input type="text" class="roNumber"  id="RoClockRoNumber" name="roNumber" autocomplete="off" style="width: 70px"><br><br>
+                    </div>
+                    <br /><br /><br /><br />
                 </div>
-                <div>
-                    <label for="ROGuid">RO Number: </label>
-                    <select id="ROGuid" name="ROGuid">
-                        <option value=""></option>
-                    </select><br /><br />
+            </form>
+                <div id="mainstopwatch">
+                    <div class="mainTime">
+                        <span id="mainhour">00</span>
+                        <span>:</span>
+                        <span id="mainminute">00</span>
+                        <span>:</span>
+                        <span id="mainsecond">00</span>
+                    </div>
+                    <br>
+                    <div>
+                        <button id="start" class="btn btn-primary">Start</button>
+                        <button id="stop" class="btn btn-secondary" disabled="disabled">Stop</button>
+                        <button id="cancel" class="btn btn-secondary" disabled="disabled">Cancel</button>
+                     </div>
+                    <div style="padding-top: 10px">
+                        <button id="RoClocksubmit" class="btn btn-secondary" disabled="disabled" form="RoClockForm" type="submit" value="Submit" method="post">Submit</button>
+                    </div>
+                    <br />
+                    <div class="col-12" id="RoClockSubmitMessage" style="@(Model.RoEntry ? "" : "display: none;")">Time Submitted!</div>
+                    <br />
+                    <div id="ErrorMessage" style=" display: none; margin-bottom: 10px; font-size:20px">
+                        One or more fields are empty or invalid, try again!
+                    </div>
                 </div>
-                <br /><br /><br /><br />
-                <div class="col-3 ClockButton">
-                    <input type="submit" id="StartClock" value="Start Working" onclick="" style="margin-right: 20px; margin-bottom: 20px; border-radius: 25px; ">
-                </div>
-                <div class="col-2 ClockButton">
-                    <input type="submit" id="PauseClock" value="Pause" onclick="" style="margin-right: 20px; margin-bottom: 20px; border-radius: 25px; ">
-                </div>
-                <div class="col-2 ClockButton">
-                    <input type="submit" id="FinishClock" value="Finish" onclick="" style="margin-right: 20px; margin-bottom: 20px; border-radius: 25px; ">
-                </div>
-            </div>
+            
         </div>
     </div>
 </div>
+<script src="~/Includes/js/cdnjs/cleave.min.js"></script>
+<script src="~/Includes/js/CleaveMain.js"></script>
+<script type="text/javascript">
+    let [second, minute, hour] = [0, 0, 0];
+    let timerRef = document.querySelector('.mainTime');
+    let int = null;
+
+    $(document).ready(function () {
+        $("#RoClockSubmitMessage").fadeOut(4000);
+        $("#cancel").click(function () {
+            location.reload(true);
+        })
+    });
+
+    //if start button clicked, perform opentime creation
+    var startTime;
+    document.getElementById('start').addEventListener('click', () => {
+        if ($("#TechGuid").val() == "") {
+            $("#ErrorMessage").show().fadeOut(4000);
+            return false;
+        }
+        else if ($("#RoClockRoNumber").val() == "T ") {
+            $("#ErrorMessage").show().fadeOut(4000);
+            return false;
+        }
+
+        SetButtonState("Start");
+
+        startTime = new Date();
+        var dateAsString = (startTime.getMonth() + 1) + "/" + startTime.getDate() + "/" + startTime.getFullYear() + " " + startTime.getHours() + ":" + startTime.getMinutes() + ":"
+            + startTime.getSeconds();
+        $('#RoClockOpenTime').val(dateAsString);
+        if (int !== null) {
+            clearInterval(int);
+        }
+        int = setInterval(mainTime, 1000);
+
+        $(window).on('beforeunload', function () {
+            var c = confirm();
+            if (c) {
+                return true;
+            }
+            else
+                return false;
+        });
+    });
+
+    //if stop button hit
+    document.getElementById('stop').addEventListener('click', () => {
+        SetButtonState("Stop");
+
+        var dateAsNumber = new Date();
+        var dateAsString = (dateAsNumber.getMonth() + 1) + "/" + dateAsNumber.getDate() + "/" + dateAsNumber.getFullYear() + " " + dateAsNumber.getHours() + ":" + dateAsNumber.getMinutes() + ":"
+            + dateAsNumber.getSeconds();
+        $('#RoClockCloseTime').val(dateAsString);
+        clearInterval(int);
+    });
+
+    //if cancel button hit
+    document.getElementById('cancel').addEventListener('click', () => {
+        //reset disable attr of all but start button
+        SetButtonState("Cancel");
+
+        $("#RoClockOpenTime").html("");
+        $("#RoClockCloseTime").html("");
+
+        clearInterval(int);
+        [seconds, minutes, hours] = [0, 0, 0];
+        $('#mainhour').html("00");
+        $('#mainminute').html("00");
+        $('#mainsecond').html("00");
+
+        
+    });
+
+    //if submit button hit
+    document.getElementById('RoClocksubmit').addEventListener('click', () => {
+        SetButtonState("Submit");
+    });
+
+    function SetButtonState(state) {
+        if (state == "Start") {
+            //after start button hit, allow stop button
+            $("#stop").removeAttr("disabled");
+            $("#stop").removeClass("btn-secondary");
+            $("#stop").addClass("btn-success");
+
+            //make start button unclickable
+            $("#start").attr("disabled", "disabled");
+            $("#start").removeClass("btn-primary");
+            $("#start").addClass("btn-secondary");
+
+            //after start hit, allow cancel button also to be shown
+            $("#cancel").removeAttr("disabled");
+            $("#cancel").removeClass("btn-secondary");
+            $("#cancel").addClass("btn-danger");
+        }
+        else if (state == "Stop") {
+            //once stop hit, disable all but submit button and cancel
+            $("#RoClocksubmit").removeAttr("disabled");
+            $("#RoClocksubmit").addClass("btn-warning");
+
+            $("#start").attr("disabled", "disabled");
+            $("#start").addClass("btn-secondary");
+
+            $("#stop").attr("disabled", "disabled");
+            $("#stop").removeClass("btn-success");
+            $("#stop").addClass("btn-secondary");
+
+        }
+        else if (state == "Cancel") {
+            //once cancel hit, restet buttons back to disable, except start
+            $("#start").removeAttr("disabled");
+            $("#start").removeClass("btn-secondary");
+            $("#start").addClass("btn-primary");
+
+            $("#stop").attr("disabled", "disabled");
+            $("#stop").removeClass("btn-success");
+            $("#stop").addClass("btn-secondary");
+
+            $("#cancel").attr("disabled", "disabled");
+            $("#cancel").removeClass("btn-danger ");
+            $("#cancel").addClass("btn-secondary");
+
+            $("#RoClocksubmit").attr("disabled", "disabled");
+            $("#RoClocksubmit").removeClass("btn-warning");
+            $("#RoClocksubmit").addClass("btn-secondary");
+        }
+        else if (state == "Submit") {
+            //if submit button hit, reset time and button disabled attr
+            $("#start").removeAttr("disabled");
+            $("#stop").attr("disabled");
+            $("#cancel").attr("disabled");
+            $("#RoClocksubmit").attr("disabled");
+        }
+    }
+
+    function mainTime() {
+        var timeDiff = (new Date() - startTime) / 1000;
+        var seconds = Math.floor(timeDiff % 60);
+        var minutes = Math.floor(timeDiff / 60 % 60);
+        var hours = Math.floor(timeDiff / (60 * 60));
+
+        let h = hours < 10 ? "0" + hours : hours;
+        let m = minutes < 10 ? "0" + minutes : minutes;
+        let s = seconds < 10 ? "0" + seconds : seconds;
+
+        $('#mainhour').html(h);
+        $('#mainminute').html(m);
+        $('#mainsecond').html(s);
+    }
+
+    function SubmitCheck() {
+        if ($("#TechGuid").val() == "") {
+            $("#ErrorMessage").show().fadeOut(4000);
+            return false;
+        }
+        else if ($(".RoNumber").val() == "") {
+            $("#ErrorMessage").show().fadeOut(4000);
+
+            return false;
+        }
+        else if ($("#RoClockOpenTime").val() == "") {
+            $("#ErrorMessage").show().fadeOut(4000);
+
+            return false;
+        }
+        else if ($("#RoClockCloseTime").val() == "") {
+            $("#ErrorMessage").show().fadeOut(4000);
+
+            return false;
+        }
+        return true;
+    };
+
+    $('#RoClockForm').submit(function () {
+        $(window).unbind('beforeunload');
+    });
+
+    $('#cancel').click(function () {
+        $(window).unbind('beforeunload');
+    });
+</script>

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace SubaruEfficiencyTracking.Models
 {
+    //for overall stats
     public class TechPeriodStatModel
     {
         public Guid StoreGuid { get; set; }
@@ -15,5 +16,9 @@ namespace SubaruEfficiencyTracking.Models
         public float HoursTurned { get; set; }
         public float ExpectedHours { get; set; }
         public float OverallEfficiency { get; set; }
+        public int ROCarsCompleted { get; set; }
+        public float ROExpectedHours { get; set; }
+        public float ROHoursTurned { get; set; }
+        public float ROOverrallEfficiency { get; set; }
     }
 }

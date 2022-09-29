@@ -47,7 +47,10 @@ namespace SubaruEfficiencyTracking.Logic
                 T newObj = Activator.CreateInstance<T>();
                 foreach (PropertyInfo prop in typeof(T).GetProperties())
                 {
-                    prop.SetValue(newObj, _Tables[TableName].Rows[r][prop.Name]);
+                    if (_Tables[TableName].Rows[r][prop.Name] !=DBNull.Value)
+                    {
+                        prop.SetValue(newObj, _Tables[TableName].Rows[r][prop.Name]);
+                    }
                 }
                 Output.Add(newObj);
             }
@@ -138,6 +141,11 @@ namespace SubaruEfficiencyTracking.Logic
 
             string colSplitter = "\",\"";
             string[] tableLines = File.ReadAllLines(TablePath);
+
+            string[] colNames = tableLines[0].Split(colSplitter);
+            colNames[0] = colNames[0].TrimStart('"');
+            colNames[colNames.Length - 1] = colNames[colNames.Length - 1].TrimEnd('"');
+
             for (int r = 1; r < tableLines.Length; r++)
             {
                 string[] cols = tableLines[r].Split(colSplitter);
@@ -146,9 +154,13 @@ namespace SubaruEfficiencyTracking.Logic
                 cols[cols.Length - 1] = cols[cols.Length - 1].TrimEnd('"');
 
                 DataRow newRow = TableData.NewRow();
-                for (int c = 0; c < typeof(T).GetProperties().Length; c++)
+                for (int c = 0; c < typeof(T).GetProperties().Length && c < cols.Length; c++)
                 {
-                    newRow[typeof(T).GetProperties()[c].Name] = cols[c];
+                    string PropName = colNames[c];
+                    if (cols[c] != "")
+                    { 
+                        newRow[PropName] = cols[c];
+                    }
                 }
                 TableData.Rows.Add(newRow);
             }

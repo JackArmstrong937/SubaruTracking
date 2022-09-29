@@ -19,6 +19,8 @@ namespace SubaruEfficiencyTracking.Models
         public List<TechPeriodStatModel> TechStats;
         public List<TimeModel> TechTimeDetails;
 
+        public int ROCarsIncomplete;
+
         public bool RoEntry;
     }
 }

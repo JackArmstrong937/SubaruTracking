@@ -1,5 +1,6 @@
 ﻿@using SubaruEfficiencyTracking.Models
-using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Http
+
 @model RoEntryViewModel;
 @{
     ViewBag.HeaderTitle = "Efficiency Statistics";
@@ -8,10 +9,10 @@ using Microsoft.AspNetCore.Http;
 }
 
 <div class="row">
-    <div class="col-8">
-        <div class="row">
-            <div style="margin-left: 10px;" class="col-5 dropDownOption">
-                <label for="timePeriod">Time Period: </label>
+    <div class="col-9" style="padding-right: 5px">
+        <div class="row" style="padding-right: 12px; padding-left:5px">
+            <div class="col-4 dropDownOption">
+                <label for="timePeriod">Pay Period: </label>
                 <select id="timePeriod" onchange="LoadListFromFilters();">
                     @foreach (PayPeriodModel Period in Model.PayPeriods)
                     {
@@ -19,23 +20,71 @@ using Microsoft.AspNetCore.Http;
                     }
                 </select><br><br>
             </div>
-            <div class="col-5 dropDownOption">
-                <label for="StoreLocation">Store: </label>
-                <select id="StoreLocation" onchange="LoadListFromFilters();">
-                    @foreach (StoreLocationModel store in Model.Stores)
-                    {
-                        <option value="@store.StoreGuid" @(store.StoreGuid == Model.SelectedStoreGuid ? "selected" : "")>@store.StoreName</option>
-                    }
-                </select><br><br>
+            @*<div class="col-4 dropDownOption">
+            <label for="StoreLocation">Store: </label>
+            <select id="StoreLocation" onchange="LoadListFromFilters();">
+                @foreach (StoreLocationModel store in Model.Stores)
+                {
+                    <option value="@store.StoreGuid" @(store.StoreGuid == Model.SelectedStoreGuid ? "selected" : "")>@store.StoreName</option>
+                }
+            </select><br><br>
+        </div>*@
+            @*<div class="col-3 DownloadBtn"><a href="/Tracking/DownloadList">Download Pay-Period Data</a></div>*@
+            <div class="col-4"></div>
+            <div class="col-4 EfficiencyStatBox">
+                <div class="row">
+                    <div class="combEfficTitle col-12">Combined Efficiencies</div>
+                    <div class="col-6 CombinedEfficny" style="text-align: left">
+                        <label for="combEffic">RO Open-Close:</label>
+                        <br />
+                        <output name="combEffic">
+                            @{
+                                float totalExpected = 0;
+                                float totalActual = 0;
+                                foreach (TechPeriodStatModel t in Model.TechStats)
+                                {
+                                    totalExpected += t.ExpectedHours;
+                                    totalActual += t.HoursTurned;
+                                }
+                                if ((totalExpected / totalActual).ToString() == "NaN") { }
+                                else
+                                {
+                                    @Html.Raw((totalExpected / totalActual * 100).ToString("f1") + "%");
+
+                                }
+                            }
+                        </output>
+                    </div>
+                    <div class="col-6 CombinedEfficny" style="text-align: left">
+                        <label for="RoClockcombEffic">RO-Clock:</label>
+                        <br />
+                        <output name="roClockCombEffic">
+                            @{
+                                float RoClocktotalExpected = 0;
+                                float RoClocktotalActual = 0;
+                                foreach (TechPeriodStatModel t in Model.TechStats)
+                                {
+                                    RoClocktotalExpected += t.ROExpectedHours;
+                                    RoClocktotalActual += t.ROHoursTurned;
+                                }
+                                if (RoClocktotalActual > 0)
+                                {
+                                    @Html.Raw((RoClocktotalExpected / RoClocktotalActual * 100).ToString("f1") + "%");
+                                }
+                            }
+                        </output>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row" id="infoHeader">
             <div class="col-2 infoDiv">Tech Name</div>
-            <div class="col-2 infoDiv">Tech Number</div>
-            <div class="col-2 infoDiv">Cars Completed</div>
-            <div class="col-2 infoDiv">Actual Hours</div>
-            <div class="col-2 infoDiv">Expected Hours</div>
-            <div class="col-2">Overall Efficiency</div>
+            <div class="col-1 infoDiv">Tech Number</div>
+            <div class="col-1 infoDiv">Cars Finished</div>
+            <div class="col-2 infoDiv">Total RO Hours</div>
+            <div class="col-2 infoDiv">Total Expected Hours</div>
+            <div class="col-2 infoDiv">Open-Close Efficiency</div>
+            <div class="col-2">RO-Clock Efficiency</div>
         </div>
         <div id="TechStats">
             @if (Model.TechStats != null)
@@ -44,65 +93,89 @@ using Microsoft.AspNetCore.Http;
                 {
                     <div class="row altRowColors">
                         <div class="col-2"><a href="/Tracking/TechTimes/?t=@t.TechGuid&p=@Model.SelectedPayPeriodGuid&s=@Model.SelectedStoreGuid">@t.TechFirstName @t.TechLastName</a></div>
-                        <div class="col-2 ">@Model.Techs.Find(m => m.TechGuid == t.TechGuid).TechNumber</div>
-                        <div class="col-2 ">@t.CarsCompleted</div>
+                        <div class="col-1 ">@Model.Techs.Find(m => m.TechGuid == t.TechGuid).TechNumber</div>
+                        <div class="col-1 ">@t.CarsCompleted</div>
                         <div class="col-2 ">@t.HoursTurned.ToString("f1")</div>
                         <div class="col-2 ">@t.ExpectedHours.ToString("f1")</div>
-                        <div class="col-2 ">@((t.OverallEfficiency * 100).ToString("f1"))%</div>
+                        <div class="col-2 ">@(t.OverallEfficiency.ToString("") == "NaN" ? "0.0%" : (t.OverallEfficiency * 100).ToString("f1") + "%")</div>
+                        <div class="col-2 ">@(t.ROHoursTurned == 0 ? "" : (t.ROOverrallEfficiency * 100).ToString("f1") + "%" + "  (" + t.ROCarsCompleted + "/" + t.CarsCompleted + ") Cars")</div>
+
                     </div>
                 }
             }
         </div>
     </div>
-    <div class="col-4">
+    <div class="col-3" style="@(Context.Session.GetString("UserType") != "Admin" ? "display:none;" : "")">
         <div class="col-12" id="entrySection">
-            <div id="entryHeader" class="col-12">RO Entries</div>
+            <div id="entryHeader" class="col-12">Ro Entries</div>
             <div id="ro-entry">
-                @if (Microsoft.AspNetCore.Mvc.)
-                    <form action="/Tracking/newEntry" method="post">
+                <form action="/Tracking/ListingEntrySave" method="post" onsubmit="return SubmitCheck()">
+                    <div class="col-12">
                         <div class="col-12">
+                            <input type="hidden" id="TimeGuid" name="TimeGuid" value="" />
+                            <input type="hidden" id="StoreGuid" name="StoreGuid" value="@Model.SelectedStoreGuid" />
                             <div class="col-12">
-                                <input type="hidden" id="StoreGuid" name="StoreGuid" value="@Model.SelectedStoreGuid" />
-                                <label for="PayPeriodGuid">Pay Period: </label>
-                                <select id="PayPeriodGuid" name="PayPeriodGuid">
-                                    @foreach (PayPeriodModel p in Model.PayPeriods)
-                                    {
-                                        <option value="@p.PayPeriodGuid" @(p.PayPeriodGuid == Model.SelectedPayPeriodGuid ? "selected" : "")>@p.StartDate.ToShortDateString() - @p.EndDate.ToShortDateString()</option>
-                                    }
-                                </select><br /><br />
-                                <label for="TechGuid">Technician: </label>
-                                <select id="TechGuid" name="TechGuid">
-                                    <option value=""></option>
-                                    @foreach (TechModel t in Model.Techs)
+                                <label for="roNumber">RO Number: </label>
+                                <input type="text" class="roNumber" id="RoNumber" name="roNumber" autocomplete="off" style="width: 70px" onblur="DoROSearch();"><br><br>
+                            </div>
+                            <label for="PayPeriodGuid">Pay Period: </label>
+                            <select id="PayPeriodGuid" name="PayPeriodGuid" onchange="setDateRangePicker();">
+                                @foreach (PayPeriodModel p in Model.PayPeriods)
+                                {
+                                    <option value="@p.PayPeriodGuid" @(p.PayPeriodGuid == Model.SelectedPayPeriodGuid ? "selected" : "")>@p.StartDate.ToShortDateString() - @p.EndDate.ToShortDateString()</option>
+                                }
+                            </select><br /><br />
+                            <label for="TechGuid">Technician: </label>
+                            <select id="TechGuid" name="TechGuid">
+                                <option value="">--Select Technician--</option>
+                                @foreach (TechModel t in Model.Techs)
+                                {
+                                    @if (t.TechActive == true)
                                     {
                                         <option value="@t.TechGuid">@t.TechFirstName @t.TechLastName - @t.TechNumber</option>
                                     }
-                                </select><br /><br />
+
+                                }
+                            </select><br /><br />
+                        </div>
+                        <div class="col-12">
+                            <label for="roDate">RO Date: </label>
+                            <input type="date" id="roDate" name="roDate" class="handleEnter" nextField="OpenTime" autocomplete="off" style="width: 120px"><br><br>
+                        </div>
+                        <div class="col-12">
+                            <label for="openTime">Time Opened:</label>
+                            <input type="text" id="OpenTime" name="OpenTime" class="opentimeFormat" nextField="CloseTime" autocomplete="off" style="width: 52px"><br><br>
+                        </div>
+                        <div class="col-12">
+                            <label for="closeTime">Time Closed:</label>
+                            <input type="text" id="CloseTime" name="CloseTime" class="closetimeFormat" nextField="ExptHours" autocomplete="off" style="width: 52px"><br><br>
+                        </div>
+                        <div class="col-12">
+                            <label for="exptHours">Expected Hours: </label>
+                            <input type="text" id="ExptHours" name="ExptHours" class="handleEnter" nextField="OpenTime" autocomplete="off" style="width: 50px"><br><br>
+                        </div>
+                        <div id="RoClockInfo" style="display:none;">
+                            <div class="col-12">
+                                <label for="openTime">RO Clock Time Started:</label>
+                                <input type="text" id="ROClockOpenTime" name="ROClockOpenTime" disabled style="width: 80px"><br><br>
                             </div>
                             <div class="col-12">
-                                <label for="openTime">Time Opened:</label>
-                                <input type="text" id="OpenTime" name="OpenTime" class="handleEnter" nextField="CloseTime" autocomplete="off" style="width: 52px"><br><br>
-                            </div>
-                            <div class="col-12">
-                                <label for="closeTime">Time Closed:</label>
-                                <input type="text" id="CloseTime" name="CloseTime" class="handleEnter" nextField="ExptHours" autocomplete="off" style="width: 52px"><br><br>
-                            </div>
-                            <div class="col-12">
-                                <label for="exptHours">Expected Hours: </label>
-                                <input type="text" id="ExptHours" name="ExptHours" class="handleEnter" nextField="OpenTime" autocomplete="off" style="width: 50px"><br><br>
-                            </div>
-                            <div class="row">
-                                <div class="col-3" id="submitButton">
-                                    <input class="submit" type="submit" value="Submit" onclick="return SubmitCheck();" style="margin-right: 20px; margin-bottom: 20px; border-radius: 25px; ">
-                                </div><br />
-                                <div class="col-5" id="submitMessage" style="@(Model.RoEntry ? "" : "display: none;")">Entry Submitted!</div>
-                                <div id="ErrorMessage" style="display: none; margin-bottom: 10px;">
-                                    One or more entry field is not filled out, try again!
-                                </div>
-                                <div class="col-3"></div>
+                                <label for="closeTime">RO Clock Time Finished:</label>
+                                <input type="text" id="ROClockCloseTime" name="ROClockCloseTime" disabled style="width: 80px"><br><br>
                             </div>
                         </div>
-                    </form>
+                        <div class="row">
+                            <div class="col-3" id="submitButton">
+                                <input class="submit" type="submit" value="Submit" method="post" style="margin-right: 20px; margin-bottom: 20px; border-radius: 25px; ">
+                            </div><br />
+                            <div class="col-5" id="submitMessage" style="@(Model.RoEntry ? "" : "display: none;")">Entry Submitted!</div>
+                            <div id="ErrorMessage" style="display: none; margin-bottom: 10px;">
+                                One or more fields are empty or invalid, try again!
+                            </div>
+                            <div class="col-3"></div>
+                        </div>
+                    </div>
+                </form>
             </div>
             @*<div class="col-12">
                     <div class="row" id="entryResults">
@@ -124,33 +197,76 @@ using Microsoft.AspNetCore.Http;
     {
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#submitMessage").fadeOut(4000);
+            $("#submitMessage").fadeOut(5000);
+            setDateRangePicker();
         });
+
+        //if ro clock time exists for ro number, when typed in ro entry box, data autofilled
+        function DoROSearch() {
+            var SearchURL = "/Tracking/ROSearch/?";
+            /*SearchURL += "p=" + $("#PayPeriodGuid").val();*/
+            SearchURL += "&s=" + $("#StoreGuid").val();
+            SearchURL += "&r=" + $("#RoNumber").val();
+            $.ajax(SearchURL).success(function (result) {
+                if (result != null && result.roClockOpenTime != "0001-01-01T00:00:00") {
+                    $("#RoClockInfo").show();
+                    $("#PayPeriodGuid").val(result.payPeriodGuid);
+                    $("#TimeGuid").val(result.timeGuid);
+                    $("#TechGuid").val(result.techGuid);
+                    $("#roDate").val(result.roClockOpenTime.split('T')[0]);
+                    $("#ROClockOpenTime").val(result.roClockOpenTime.split('T')[1]);
+                    $("#ROClockCloseTime").val(result.roClockCloseTime.split('T')[1]);
+                }
+            });
+        }
+
         function SubmitCheck() {
             if ($("#TechGuid").val() == "") {
-                $("#ErrorMessage").show().fadeOut(4000);
+                $("#ErrorMessage").show().fadeOut(5000);
+                return false;
+            }
+            else if ($(".RoNumber").val() == "") {
+                $("#ErrorMessage").show().fadeOut(5000);
+
                 return false;
             }
             else if ($("#OpenTime").val() == "") {
-                $("#ErrorMessage").show().fadeOut(4000);
+                $("#ErrorMessage").show().fadeOut(5000);
 
                 return false;
             }
             else if ($("#CloseTime").val() == "") {
-                $("#ErrorMessage").show().fadeOut(4000);
+                $("#ErrorMessage").show().fadeOut(5000);
 
                 return false;
             }
             else if ($("#ExptHours").val() == "") {
-                $("#ErrorMessage").show().fadeOut(4000);
+                $("#ErrorMessage").show().fadeOut(5000);
 
                 return false;
             }
+
+            var timeOpen = $("#OpenTime").val();
+            var timeClose = $("#CloseTime").val();
+
+            var timeOpenList = timeOpen.split(':')
+            var timeCloseList = timeClose.split(':')
+
+            var hourDiff = parseInt(timeCloseList[0]) - parseInt(timeOpenList[0]);
+            if (hourDiff < 0) {
+                var TimeErrorMessage = "Invalid open or close time, please enter military time hours.";
+                $("#ErrorMessage").empty().append(TimeErrorMessage).show().fadeOut(5000);
+
+                return false;
+            }
+
+            $("#OpenTime").val($("#roDate").val() + " " + $("#OpenTime").val());
+            $("#CloseTime").val($("#roDate").val() + " " + $("#CloseTime").val());
         };
 
-        $.timeEntry.setDefaults({ show24Hours: true });
-        $('#OpenTime').timeEntry({ show24Hours: true, showSeconds: false })
-        $('#CloseTime').timeEntry({ show24Hours: true, showSeconds: false })
+        //$.timeEntry.setDefaults({ show24Hours: true });
+        //$('#OpenTime').timeEntry({ show24Hours: true, showSeconds: false });
+        //$('#CloseTime').timeEntry({ show24Hours: true, showSeconds: false });
 
         $(document).on("keydown", ".handleEnter", function (event, e) {
             if (event.key == "Enter") {
@@ -167,5 +283,25 @@ using Microsoft.AspNetCore.Http;
             url += "&s=" + $("#StoreLocation").val();
             window.location = url;
         }
+
+        function setDateRangePicker() {
+            var selectedRange = $("#PayPeriodGuid option:selected").text();
+            var dates = selectedRange.split(" - ");
+            var startdateparts = dates[0].split("/");
+            var startdate = startdateparts[2] + "-" + padString(startdateparts[0], 2) + "-" + padString(startdateparts[1], 2);
+            $("#roDate").attr("min", startdate);
+
+            var enddateparts = dates[1].split("/");
+            var enddate = enddateparts[2] + "-" + padString(enddateparts[0], 2) + "-" + padString(enddateparts[1], 2);
+            $("#roDate").attr("max", enddate);
+        }
+        function padString(value, length) {
+            while (value.length < length) {
+                value = "0" + value;
+            }
+            return value;
+        }
     </script>
+    <script src="~/Includes/js/cdnjs/cleave.min.js"></script>
+    <script src="~/Includes/js/CleaveMain.js"></script>
 }
