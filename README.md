@@ -44,7 +44,12 @@ This Website was designed and developed to be used as a means of more efficientl
     <div>
       The highlighted area is the main table that displays the overall combined statistical data of all lube technicians for that respective pay period.
     </div>
-  
+
+
+  The idea was for when a lube tech starts working on
+      a car, they would start the timer after putting in the required information and then once the repairs were complete would stop and submit the created time stamp. Later, when the admin fills in the rest of the information for the specific RO, the lube technician RO-Clock
+      timestamp would get added to that RO entry. The main purpose of this RO-Clock feature is the provide a more accurate timestamp for how long the repairs actually took as opposed to the overall vehicle service timestamp, which includes time working with the advisors, waiting for 
+      approved parts, and working with the customer. Without this RO-Clock timestamp, the efficiencies aren't reflective of actual repair times. 
   
   
 
