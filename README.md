@@ -13,7 +13,7 @@ This Website was designed and developed to be used as a means of more efficientl
 </div>
 
 <h2>
-  Overview and Features
+  Overview and Feature Outline
 </h2>
   <div>
     <ul style="list-style: none">
@@ -37,7 +37,7 @@ This Website was designed and developed to be used as a means of more efficientl
       When first loading the website, the user is required to put in the correct login credentials in order to access the site. In this application, there are two users: a lube technician and an admin. The lube technician is the basic user who has restricted access to
       certain functions such as the Repair Order (RO) information submission form and permission to change and update technician data. The admin has full access to the website's features and functions.
     <div>
-    <h2></h2>
+    <h3></h3>
 
   <h2>Navigation Tabs/Pages</h2>
     <img src="https://github.com/JackArmstrong937/SubaruTracking/assets/101604941/6e9d91d9-60b0-4336-97d3-267d1e86891d"/>
@@ -49,7 +49,7 @@ This Website was designed and developed to be used as a means of more efficientl
       On the Techs page, lube technician information can be changed/updated and new techs can be inputted. Next, the RO-Clock tab directs to a page that has a stopwatch used for tracking the time spent working on a vehicle. Finally, the logout tab simply logs the user out, redirects them 
       to the login page, and requires them to input the correct credentials to log back in.
     <div>
-    <h2></h2>
+    <h3></h3>
 
   <h2>Overall Statistics of Lube Technician</h2>
     <img src="https://github.com/JackArmstrong937/SubaruTracking/assets/101604941/c991c80b-2456-4692-98c4-43ebebea8bf8"/>
@@ -57,12 +57,22 @@ This Website was designed and developed to be used as a means of more efficientl
     <div>
       The highlighted area is the main table that displays the overall combined statistical data of all lube technicians for that respective pay period, which can be changed using the pay period drop-down box at the top left of the page. The data shown in the table gives an overview of each tech's performance for that pay period. For a better understanding of the data shown, allow me to explain what each column of data represents. Total RO hours represents the combined time taken to complete repairs on all cars worked on by that tech. This timestamp is from the time the car was checked in to the time the car was checked out. This does not specifically represent how much time the tech actually spent on making the repairs, rather it is the whole servicing process from start to finish. Total expected hours is the amount of time each car repair should take. Each repair type has a fixed time it should take to complete that job. For example, a simple oil change has an expected time stamp of ~0.5 hours. The total expected hours is simply the addition of all timestamps for  each repair/type of repair for all serviced vehicles. The efficiency is then calculated based on the difference between Total RO Hours and Total Expected Hours. The closer the Total RO Hours is to the Total Expected Hours, the closer the efficiency percentage is to 100%. Finally, the RO-Clock Efficiency represents how much time the lube tech actually spent working on the vehicle, without respect to the overall time the car spent in the servicing process. Since a car could sit in the service drive for 10-30 or more minutes until being worked on, finding out how long the repairs actually took can be determined with the RO-Clock data variable. However, this RO-Clock data variable is dependent upon whether or not the lube tech used the RO-Clock feature, which will be explained later on, thus it is an option data point.  
     </div>
-    <h2></h2>
+    <h3></h3>
      <img src="https://github.com/JackArmstrong937/SubaruTracking/assets/101604941/dae1e3cf-34fe-4325-8416-ca5e8251387b"/>
      <h2></h2>
      <div>
-       In the Combined Efficiencies box, all efficiencies of all techs are shown. Both the open-close and RO-Clock efficiencies are calculated to have a better overall view of the lube techs and their performance for that pay period. 
+       In the Combined Efficiencies box, all efficiencies of all techs are shown. Both the open-close and RO-Clock efficiencies are calculated to have a better overall view of all the lube techs and their performance for that pay period. 
      </div>
+      <h3></h3>
+     <h2>Individual Technician Statistics Tracking</h2>
+     <h2></h2>
+     <div>
+       For a more detailed report of an individual lube technician, you can either click on the name of a tech on the first/main page or click the Entires tab at the top. Once on the Entries tab, you can select pay period, the desired tech you want to look at, or even search by a specific RO number, which is assigned to every customer vehicle going through service. On this page, you can see a more detailed data set for each individual car that tech worked on rather than a combined view. Additional information can be seen for each car worked on such as RO number, date worked on, individual open-close time, and RO-Clock efficiency time. 
+     </div>
+     <h2></h2>
+     
+     
+     
 
 
   
