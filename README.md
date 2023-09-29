@@ -19,13 +19,14 @@ This Website was designed and developed to be used as a means of more efficientl
     <ul style="list-style: none">
       <li>Login and Authentication</li>
       <li>User Profiles (Technician and Admin)</li>
+      <li>Statistical Data and Overview</li>
       <li>Navigation Tabs/Pages</li>
       <li>Overall Statistics of Lube Technician</li>
-      <li>Individual Technician Statistics Tracking</li>
-      <li>Vehicle Service Tracking Clock</li>
       <li>Repair Order (RO) Information Submission Form</li>
-      <li>Statistical Data and Overview</li>
+      <li>Individual Technician Statistics Tracking</li>
       <li>Data Entry Search Function</li>
+      <li>Technician Creation and Updates</li>
+      <li>Vehicle Service Tracking Clock</li>
       <li>Pay Period Division</li>
     </ul>
   </div>
@@ -64,12 +65,47 @@ This Website was designed and developed to be used as a means of more efficientl
        In the Combined Efficiencies box, all efficiencies of all techs are shown. Both the open-close and RO-Clock efficiencies are calculated to have a better overall view of all the lube techs and their performance for that pay period. 
      </div>
       <h3></h3>
-     <h2>Individual Technician Statistics Tracking</h2>
+     <h2>Repair Order (RO) Information Submission Form</h2>
+     <img src="https://github.com/JackArmstrong937/SubaruTracking/assets/101604941/b6daf226-4031-4283-8c3c-21b9dcb61179"/>
      <h2></h2>
      <div>
-       For a more detailed report of an individual lube technician, you can either click on the name of a tech on the first/main page or click the Entires tab at the top. Once on the Entries tab, you can select pay period, the desired tech you want to look at, or even search by a specific RO number, which is assigned to every customer vehicle going through service. On this page, you can see a more detailed data set for each individual car that tech worked on rather than a combined view. Additional information can be seen for each car worked on such as RO number, date worked on, individual open-close time, and RO-Clock efficiency time. 
+       The RO Entry form as seen above is the main form used by the admin user to input entries into the database. All the admin user needs to do is popluate the boxes, select the corresponding technician from the drop-down for that specific data entry, pick the date of completing that vehicle service of the RO, then hit submit. This form is also equipped with a date-picker, automaticaly defaulting pay period population, an invalid/empty input validation checks which prevents the user from submitting an unfinished form. The pay period drop down in the form is linked to the pay period selected in the other drop-down at the top left of this page. If the top left pay period drop-down is changed, the one in the form will change, however, if the one in the form is changed, the other drop-down is uneffected. In addition, the pay period drop-down will default to whatever the current pay period is, that way the admin user doesn't have to select the right pay period every time when using the form.
      </div>
+      <h3></h3>
+     <img src="https://github.com/JackArmstrong937/SubaruTracking/assets/101604941/97144a05-209f-4a78-b32e-ca00a90eac80"/>
      <h2></h2>
+     <div>
+       The datepicker in this form is also configured so that only dates within that respective pay period can be selected. All out-of-bounds dates will be greyed out and unable to be picked. This feature is just another form of form consistency and error handling, preventing from entries having incorrect data accidently inputed. 
+      <h3></h3>
+     </div>
+     <h2>Individual Technician Statistics Tracking</h2>
+     <img src="https://github.com/JackArmstrong937/SubaruTracking/assets/101604941/8670593e-906d-4d52-afa5-4b458bc7547c"/>
+     <h2></h2>
+     <div>
+       For a more detailed report of an individual lube technician, you can either click on the name of a tech on the first/main page or click the Entires tab at the top. Once on the Entries tab, you can select pay period, the desired tech you want to look at, or even search by a specific RO number, which is assigned to every customer vehicle going through service. On this page, you can see a more detailed data set for each individual car that tech worked on rather than a combined view. Additional information can be seen for each car worked on such as RO number, date worked on, individual open-close time, and RO-Clock efficiency time. You will also notice that some of the percentages and data columns are red and green. If percentages or certain data values fall below a desired proficiency level, the entry will be flagged red, signifying that something is either wrong in the data entry, or simply the tech did not meet performance expectations. On the other hand, if the data entry values are green, this signifies that the tech had exceptional performance levels on that particular car. The goal is to have mostly green values highlighted and figure out how to improve so that little to no red entries are seen.  
+      <h3></h3>
+     </div>
+     <img src="https://github.com/JackArmstrong937/SubaruTracking/assets/101604941/5601f9c7-7ad3-44d8-9e67-7a60b4e62418"/>
+     <h2></h2>
+     <div>  
+     At the right of each data entry is an edit button. When clicked, an edit modal as seen above will pop up, allowing the user to edit any information about that specific data entry. The modal will be populated with all data respective to which edit button was clicked but allowing any of the values to be changed. Then, once the saved button is clicked, that data entry will then be updated to whatever data values were entered/altered and the modal closed. There is also an option for deleting that entry; however, it is a soft delete, meaning that the entry still exists in the database but isn't used in any calculations. 
+     <h3></h3>
+     </div>
+     <img src="https://github.com/JackArmstrong937/SubaruTracking/assets/101604941/43b0ae54-89a3-4332-9f2d-6412cc881710"/>
+     <h2></h2>
+     There is also a feature on this page that allows the user to search an RO entry by RO number. In the image above, the RO being searched is 500. Since RO numbers rotate and eventually there will be multiple entries with the same RO number, this search feature will bring up all RO entries matching the searched RO number, pulling up all needed information. This search feature makes it easier to find a specific RO entry for whatever reason. 
+     <h3></h3>
+<h2>Technician Creation and Updates</h2>
+     <img src="https://github.com/JackArmstrong937/SubaruTracking/assets/101604941/1fb69358-3844-4c3f-b976-f870bc11aab3"/>
+     <h2></h2>
+     <div>
+       On the Techs page, all lube technicians, both active and inactive, are shown with their respective information such as name (first and last), tech number, which store they work at, and if they are activily working at that respective store or not. In the image above, the table below the Show Inactive Lube Techs button will show up when the button is clicked. By default, this table is hidden. To the right of the page, there is a form used for adding new technicians. This form is also used to update technicians when the edit button next to the respective tech name is clicked. 
+     </div>
+     
+
+     
+     
+     
      
      
      
